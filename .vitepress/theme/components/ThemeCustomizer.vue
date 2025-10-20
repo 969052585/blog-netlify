@@ -1,0 +1,106 @@
+<script lang="ts" setup>
+import type {Color} from '../types/colors'
+import {colors} from '@/lib/registry'
+import {Button} from '@/lib/registry/new-york/ui/button'
+import {Label} from '@/lib/registry/new-york/ui/label'
+import {RADII, useConfigStore} from '@/stores/config'
+import RadixIconsCheck from '~icons/radix-icons/check'
+import RadixIconsMoon from '~icons/radix-icons/moon'
+import RadixIconsSun from '~icons/radix-icons/sun'
+import {useData} from 'vitepress'
+
+defineProps<{
+  allColors: ({ name: string, value: Color })[]
+}>()
+
+const {theme, radius, setRadius, setTheme} = useConfigStore()
+const {isDark} = useData()
+</script>
+
+<template>
+  <div class="p-4">
+    <div class="grid space-y-1">
+      <h1 class="text-md text-foreground font-semibold">
+        自定义设置
+      </h1>
+      <p class="text-xs text-muted-foreground">
+        为你的网页选择样式和颜色。
+      </p>
+    </div>
+    <div class="space-y-1.5 pt-6">
+      <Label for="color" class="text-xs"> 颜色 </Label>
+      <div class="grid grid-cols-3 gap-2 py-1.5">
+        <Button
+            v-for="({name, value: color}, index) in allColors"
+            :key="index"
+            variant="outline"
+            class="h-8 justify-start px-3"
+            :class="
+            color === theme
+              ? 'border-foreground border-2'
+              : ''
+          "
+            @click="setTheme(color)"
+        >
+          <span
+              class="h-5 w-5 rounded-full flex items-center justify-center shrink-0"
+              :style="{ backgroundColor: colors[color][7].rgb }"
+          >
+            <RadixIconsCheck
+                v-if="color === theme"
+                class="h-3 w-3 text-white"
+            />
+          </span>
+          <span class="ml-2 text-xs capitalize">
+            {{ name }}
+          </span>
+        </Button>
+      </div>
+    </div>
+    <div class="space-y-1.5 pt-6">
+      <Label for="radius" class="text-xs"> 圆角 </Label>
+      <div class="grid grid-cols-5 gap-2 py-1.5">
+        <Button
+            v-for="(r, index) in RADII"
+            :key="index"
+            variant="outline"
+            class="h-8 justify-center px-3"
+            :class="
+            r === radius
+              ? 'border-foreground border-2'
+              : ''
+          "
+            @click="setRadius(r)"
+        >
+          <span class="text-xs">
+            {{ r }}
+          </span>
+        </Button>
+      </div>
+    </div>
+    <div class="space-y-1.5 pt-6">
+      <Label for="theme" class="text-xs"> 主题 </Label>
+
+      <div class="flex space-x-2 py-1.5">
+        <Button
+            class="h-8"
+            variant="outline"
+            :class="{ 'border-2 border-foreground': !isDark }"
+            @click="isDark = false"
+        >
+          <RadixIconsSun class="w-4 h-4 mr-2"/>
+          <span class="text-xs">浅色</span>
+        </Button>
+        <Button
+            class="h-8"
+            variant="outline"
+            :class="{ 'border-2 border-foreground': isDark }"
+            @click="isDark = true"
+        >
+          <RadixIconsMoon class="w-4 h-4 mr-2"/>
+          <span class="text-xs">深色</span>
+        </Button>
+      </div>
+    </div>
+  </div>
+</template>

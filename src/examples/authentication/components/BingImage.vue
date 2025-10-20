@@ -1,0 +1,110 @@
+<script setup lang="ts">
+
+import {cn} from "@/lib/utils";
+import {buttonVariants} from "@/lib/registry/new-york/ui/button";
+import {ref, watch} from "vue";
+import {ChevronLeft, ChevronRight} from 'lucide-vue-next'
+
+const defaultImage = {
+  "startdate": "20250226",
+  "fullstartdate": "202502261600",
+  "enddate": "20250227",
+  "url": "/th?id=OHR.PolarCub_ZH-CN1179361319_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp",
+  "urlbase": "/th?id=OHR.PolarCub_ZH-CN1179361319",
+  "copyright": "北极熊幼崽，丘吉尔，马尼托巴省，加拿大 (© Eric Baccega/NPL/Minden Pictures)",
+  "copyrightlink": "https://www.bing.com/search?q=%E5%9B%BD%E9%99%85%E5%8C%97%E6%9E%81%E7%86%8A%E6%97%A5&form=hpcapt&mkt=zh-cn",
+  "title": "极地关怀",
+  "quiz": "/search?q=Bing+homepage+quiz&filters=WQOskey:%22HPQuiz_20250226_PolarCub%22&FORM=HPQUIZ",
+  "wp": true,
+  "hsh": "c0a8c8a29e280d906d8c2a2ad0f0ff8c",
+  "drk": 1,
+  "top": 1,
+  "bot": 1,
+  "hs": []
+} as const
+type Image = typeof defaultImage
+const image = ref<typeof defaultImage>()
+const copyrightReg = /^(.*) \((.*)\)$/
+const imgIdx = ref(0)
+const imgLoading = ref(false)
+const images = ref<Record<number, Image>>({})
+
+watch(() => imgIdx.value, async function(idx) {
+  if (!images.value[idx]) {
+    if (import.meta.env.SSR) return
+    imgLoading.value = true
+    const apiUrl = `/image/${idx}`
+    await fetch(apiUrl)
+        .then(res => res.json())
+        .then(({data,code}) => {
+          if(200 === code)images.value[idx] = data
+        })
+        .finally(() => imgLoading.value = false)
+  }
+  if (images.value[idx])image.value = images.value[idx]
+}, {immediate: true})
+</script>
+
+<template>
+  <ClientOnly v-if="image">
+    <div v-if="image" class="flex justify-between">
+      <div class="head_cont" id="headCont">
+        <svg id="bLogo" role="img" class="logo logo_click" viewBox="0 0 154 28" aria-label="必应" tabindex="0">
+          <svg class="squares" aria-hidden="true">
+            <path class="top_l" d="M11.35 0H0v11.35h11.35z"></path>
+            <path class="top_r" d="M23.88 0H12.53v11.35h11.35z"></path>
+            <path class="bom_l" d="M11.35 12.53H0v11.35h11.35z"></path>
+            <path class="bom_r" d="M23.88 12.53H12.53v11.35h11.35z"></path>
+          </svg>
+          <path class="ms_text"
+                d="M46.55 4.77V19.1h-2.48V7.87h-.05L39.59 19.1h-1.65L33.37 7.87h-.03V19.1h-2.3V4.77h3.57l4.11 10.62h.06l4.35-10.62zm2.08 1.1c0-.4.15-.74.44-1.01.29-.27.63-.4 1.03-.4a1.44 1.44 0 011.48 1.4c0 .4-.14.73-.43 1-.28.26-.64.4-1.05.4s-.76-.14-1.04-.41c-.29-.27-.43-.6-.43-.99zm2.67 2.96V19.1h-2.42V8.83zm7.34 8.51c.35 0 .75-.08 1.18-.24.44-.17.84-.39 1.2-.66v2.24c-.38.22-.82.4-1.3.5a7.2 7.2 0 01-1.62.17 4.97 4.97 0 01-3.7-1.43A4.99 4.99 0 0153 14.26c0-1.65.48-3.01 1.45-4.08.96-1.07 2.33-1.6 4.1-1.6a5.62 5.62 0 012.48.58v2.31a5 5 0 00-1.14-.63 3.32 3.32 0 00-1.2-.23c-.95 0-1.72.31-2.3.93s-.89 1.46-.89 2.51c0 1.04.29 1.85.85 2.43.56.58 1.33.86 2.3.86zm9.27-8.68a2.54 2.54 0 01.91.14v2.45a2.56 2.56 0 00-1.44-.4c-.6 0-1.1.26-1.5.76s-.62 1.27-.62 2.3v5.2h-2.42V8.82h2.42v1.62h.04c.22-.56.56-1 1-1.31.45-.32.98-.48 1.6-.48zm1.04 5.46c0-1.7.48-3.05 1.44-4.04s2.3-1.49 4-1.49c1.6 0 2.85.48 3.76 1.43s1.35 2.25 1.35 3.88c0 1.66-.48 2.99-1.44 3.97a5.22 5.22 0 01-3.92 1.48c-1.59 0-2.85-.47-3.79-1.4a5.17 5.17 0 01-1.4-3.83zm2.52-.08c0 1.07.24 1.89.73 2.46s1.18.84 2.09.84c.87 0 1.54-.28 2-.84s.7-1.41.7-2.52c0-1.1-.24-1.94-.72-2.5a2.48 2.48 0 00-2-.85c-.89 0-1.57.3-2.06.88-.5.6-.74 1.44-.74 2.53zm11.63-2.51c0 .35.1.62.33.82.22.2.7.44 1.46.74.96.39 1.64.82 2.03 1.3.39.49.58 1.07.58 1.76 0 .96-.37 1.74-1.11 2.33s-1.75.88-3.01.88a7.25 7.25 0 01-2.73-.56v-2.37c.44.3.91.55 1.42.73.5.18.97.27 1.38.27.55 0 .95-.08 1.21-.23.26-.16.39-.41.39-.77 0-.34-.14-.62-.4-.85-.28-.23-.79-.5-1.54-.8-.89-.37-1.52-.79-1.9-1.26s-.56-1.05-.56-1.77c0-.93.37-1.7 1.1-2.29.75-.6 1.7-.9 2.87-.9a7.06 7.06 0 012.33.44v2.3c-.32-.22-.7-.4-1.12-.56a3.74 3.74 0 00-1.27-.23c-.46 0-.82.1-1.07.27a.86.86 0 00-.4.75zm5.44 2.59c0-1.7.48-3.05 1.44-4.04a5.3 5.3 0 014-1.49c1.6 0 2.86.48 3.76 1.43s1.35 2.25 1.35 3.88c0 1.66-.48 2.99-1.44 3.97a5.22 5.22 0 01-3.91 1.48c-1.6 0-2.86-.47-3.8-1.4a5.17 5.17 0 01-1.4-3.83zm2.52-.08c0 1.07.24 1.89.73 2.46s1.18.84 2.1.84c.87 0 1.54-.28 2-.84s.7-1.41.7-2.52c0-1.1-.25-1.94-.72-2.5a2.48 2.48 0 00-2-.85c-.89 0-1.58.3-2.07.88a3.8 3.8 0 00-.74 2.53zm16.06-3.23h-3.6v8.3h-2.45v-8.3h-1.72V8.83h1.72V7.4a3.56 3.56 0 013.75-3.69c.3 0 .56.02.78.05.23.03.43.08.6.14v2.09a2.42 2.42 0 00-1.1-.27c-.51 0-.9.16-1.18.47-.27.32-.4.78-.4 1.4v1.25h3.6V6.53l2.42-.74v3.05H112v1.97h-2.45v4.8c0 .64.12 1.09.35 1.35.23.26.59.39 1.08.39a2.35 2.35 0 001.02-.34v2c-.15.09-.4.17-.76.24s-.7.1-1.06.1c-1.01 0-1.78-.26-2.29-.8-.5-.55-.76-1.36-.76-2.46v-5.28z"></path>
+          <path class="b_text"
+                d="M117.5 19.24V5.07h4.5c1.37 0 2.46.3 3.26.9.8.6 1.2 1.38 1.2 2.34 0 .8-.23 1.5-.68 2.1a3.68 3.68 0 01-1.89 1.26v.04c.98.11 1.75.47 2.33 1.09.59.6.88 1.4.88 2.37 0 1.21-.48 2.2-1.43 2.94s-2.16 1.13-3.62 1.13zm2.35-12.28v4.03h1.52c.82 0 1.46-.2 1.92-.57.47-.4.7-.94.7-1.64 0-1.22-.81-1.82-2.43-1.82zm0 5.92v4.48h2c.88 0 1.56-.2 2.03-.6.48-.41.72-.97.72-1.68 0-1.47-1.01-2.2-3.05-2.2zM129.97 7c-.37 0-.7-.13-.96-.37-.27-.24-.4-.55-.4-.93s.13-.69.4-.94.59-.37.97-.37.71.12.98.37.4.57.4.94c0 .36-.13.66-.4.92-.27.25-.6.38-.99.38zm1.14 12.24h-2.29V9.12h2.3zM142.46 19.24h-2.29v-5.7c0-1.9-.67-2.84-2-2.84-.7 0-1.28.27-1.74.8a2.9 2.9 0 00-.68 1.97v5.77h-2.3V9.12h2.3v1.68h.04a3.6 3.6 0 013.28-1.92c1.1 0 1.94.36 2.52 1.08.58.71.87 1.74.87 3.1zM153.81 18.43c0 3.71-1.86 5.57-5.6 5.57a8.35 8.35 0 01-3.45-.66v-2.1c1.1.64 2.16.95 3.15.95 2.4 0 3.61-1.18 3.61-3.55v-1.1h-.04a3.71 3.71 0 01-3.42 1.93 3.72 3.72 0 01-2.98-1.34 5.49 5.49 0 01-1.13-3.63c0-1.72.4-3.08 1.22-4.1s1.92-1.52 3.34-1.52c1.33 0 2.32.55 2.97 1.64h.04v-1.4h2.3zm-2.27-3.82v-1.32c0-.71-.24-1.32-.71-1.82a2.3 2.3 0 00-1.76-.76c-.87 0-1.55.33-2.04.97a4.34 4.34 0 00-.74 2.69c0 1 .24 1.79.7 2.39.48.6 1.1.89 1.88.89.8 0 1.44-.29 1.93-.85.5-.58.74-1.3.74-2.2z"></path>
+        </svg>
+      </div>
+      <div class="relative z-20 flex items-center text-lg font-medium">
+        {{ image!.title }}
+      </div>
+    </div>
+    <div v-if="image" class="z-20">
+      <img :src="'https://www.bing.com'+image.url" class="w-full">
+      <div class="text-secondary dark:text-gray-300 my-0.5 flex justify-between items-center">
+        <div>每日一图({{ image!.enddate }})</div>
+        <div>
+          <div title="上一个"
+               v-if="imgIdx < 7"
+               @click="imgIdx++"
+               :class="cn(
+        buttonVariants({ variant: 'ghost',size:'icon' })
+      )"
+          >
+            <ChevronLeft/>
+          </div>
+          <div title="下一个"
+               v-if="imgIdx > 0"
+               @click="imgIdx--"
+               :class="cn(
+        buttonVariants({ variant: 'ghost',size:'icon' })
+      )"
+          >
+            <ChevronRight/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="image" class="relative z-20 mt-auto">
+      <blockquote class="space-y-2">
+        <p class="text-lg">
+          {{ image!.copyright?.replace(copyrightReg, "$1") }}
+        </p>
+        <footer class="text-sm text-secondary dark:text-gray-300">
+          {{ image!.copyright?.replace(copyrightReg, "$2") }}
+        </footer>
+      </blockquote>
+    </div>
+  </ClientOnly>
+</template>
+
+<style scoped>
+
+</style>

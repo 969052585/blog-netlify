@@ -1,0 +1,26 @@
+[build]
+command = "pnpm run build"
+publish = ".vitepress/dist" # 部署时候上传的前端包
+functions = "netlify/functions"
+
+[dev]
+command = "pnpm run vitepress"
+port = 8080 # 后端端口 会把前端代理到后端去
+targetPort=9000 # 前端端口
+framework = "#custom"
+
+[[redirects]]
+from = "/functions/*"
+to = "/.netlify/functions/:splat"
+status = 200
+force = true
+
+[[headers]]
+for = "/*"
+[headers.values]
+Access-Control-Allow-Origin = "*"
+
+
+[functions]
+node_bundler = "esbuild"
+external_node_modules = ["@neondatabase/serverless"]
