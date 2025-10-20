@@ -23,7 +23,7 @@ const state = reactive({
 function check() {
   if (import.meta.env.SSR) return
   state.checkLoading = true
-  fetch(`/auth/check/${state.user.email}`)
+  fetch(`/functions/auth/check/${state.user.email}`)
       .then(res => res.json())
       .then(({code,msg}) => {
         if (code !== 200) return toast.warning(msg)
@@ -33,7 +33,7 @@ function check() {
 
 function login() {
   if (import.meta.env.SSR) return
-  fetch(     `/auth/login`,{
+  fetch(     `/functions/auth/login`,{
     method: "POST",
     headers: {
       'Content-Type': 'application/json'

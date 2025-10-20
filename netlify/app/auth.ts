@@ -25,7 +25,7 @@ app.post('/login', async (c: Context & { env: Env }) => {
     let {email, password = ''} = await c.req.json() as AuthDto;
     password = password.trim();
     const result = {};
-    await Orm.queryOne(User, {Email: email})(c.env.DB, result);
+    await Orm.queryOne(User, {Email: email})(result);
     const {data: userInfo, stack, meta, error} = result as OrmResult;
     if (!userInfo) return c.json(R.fail(error, stack || meta));
     if (encrypt(password, userInfo.Salt) !== userInfo.Password) return c.json(R.failMsg('用户名或密码不正确'));

@@ -33,7 +33,7 @@ watch(() => imgIdx.value, async function(idx) {
   if (!images.value[idx]) {
     if (import.meta.env.SSR) return
     imgLoading.value = true
-    const apiUrl = `/image/${idx}`
+    const apiUrl = `/functions/image/${idx}`
     await fetch(apiUrl)
         .then(res => res.json())
         .then(({data,code}) => {

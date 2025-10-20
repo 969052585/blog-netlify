@@ -1,6 +1,7 @@
 import {Hono} from "hono";
 import api from './api'
 import auth from './auth'
+import image from './image'
 import {BusinessError} from '../common/error'
 import {R} from '../common'
 import {HTTPException} from 'hono/http-exception'
@@ -106,6 +107,7 @@ const App = createSingleInstance(() => {
 
     app.route(BASE_URL.API, api);
     app.route(BASE_URL.AUTH, auth);
+    app.route(BASE_URL.IMAGE, image);
     return app
 });
 
