@@ -249,6 +249,21 @@ onMounted(() => {
        */
       accept: "image/*",
       multiple: true,
+      fieldName: 'file',
+      format: ((files: File[], responseText: string) => {
+        let {url, name} = JSON.parse(responseText)
+        let data = {
+          "msg": "",
+          "code": 0,
+          "data": {
+            "succMap": {
+              [name]: url
+            }
+          }
+        }
+        return JSON.stringify(data)
+      }) as (files: File[], responseText: string) => string,
+      url: "/functions/file/upload",
       async handler(files: File[]): string | Promise<string> | Promise<null> | null {
         function fileToBase64(file: File) {
           return new Promise((resolve, reject) => {

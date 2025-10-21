@@ -140,50 +140,66 @@ export const handler: Handler = async (event) => {
  * @returns 标准的 Request 对象
  */
 function createRequestFromEvent(event: any): Request {
-    // 构建完整的 URL
+    // 1. 构建完整 URL（修复：保留协议正确性，处理无 x-forwarded-proto 的情况）
     const host = event.headers.host;
     const path = event.path;
-    const protocol = event.headers['x-forwarded-proto'] || 'http';
+    const protocol = event.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
     const url = `${protocol}://${host}${path}`;
 
-    // 创建 URLSearchParams 对象用于查询参数
+    // 2. 处理查询参数（无问题）
     const searchParams = new URLSearchParams();
     if (event.queryStringParameters) {
         Object.entries(event.queryStringParameters).forEach(([key, value]) => {
-            if (value !== undefined) {
-                searchParams.append(key, value);
-            }
+            if (value !== undefined) searchParams.append(key, value);
         });
     }
+    const queryStr = searchParams.toString();
+    let fullUrl = queryStr ? `${url}?${queryStr}` : url;
 
-    // 如果有查询参数，添加到 URL 中
-    let fullUrl = searchParams.toString() ? `${url}?${searchParams.toString()}` : url;
-
-    // 创建 Request 对象
+    // 3. 构建 RequestInit 基础配置（无问题）
     const requestInit: RequestInit = {
         method: event.httpMethod || 'GET',
         headers: new Headers(),
+        // 关键：添加 mode 确保 CORS 兼容性（Netlify 环境需显式配置）
+        mode: 'cors',
+        // 关键：保留凭证信息（如 cookie，可选，根据需求调整）
+        credentials: 'same-origin'
     };
 
-    // 添加请求头
-    if (event.headers) {
-        Object.entries(event.headers).forEach(([key, value]) => {
-            if (value !== undefined) {
-                requestInit.headers?.append(key, value.toString());
-            }
+    // 4. 处理请求头（修复：兼容 multiValueHeaders，避免重复/丢失头信息）
+    const headers = event.multiValueHeaders || event.headers;
+    if (headers) {
+        Object.entries(headers).forEach(([key, value]) => {
+            if (value === undefined) return;
+            const values = Array.isArray(value) ? value : [value.toString()];
+            values.forEach(val => requestInit.headers?.append(key, val));
         });
     }
 
-    // 添加请求体（仅当方法不是 GET 或 HEAD 时）
     if (event.body && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(requestInit.method)) {
-        requestInit.body = event.body;
-        // 如果请求体是 base64 编码的，需要解码
+        const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
+        const isMultipart = contentType.includes('multipart/form-data');
+
         if (event.isBase64Encoded) {
-            requestInit.body = Buffer.from(event.body, 'base64').toString('utf8');
+
+            const buffer = Buffer.from(event.body, 'base64');
+
+            if (isMultipart) {
+
+                requestInit.body = buffer.buffer;
+            } else {
+                try {
+                    requestInit.body = buffer.toString('utf8');
+                } catch (e) {
+                    requestInit.body = buffer.buffer;
+                }
+            }
+        } else {
+            requestInit.body = event.body;
         }
     }
 
-    fullUrl = fullUrl.replace("/functions","")
+    fullUrl = fullUrl.replace('/functions', '');
 
     return new Request(fullUrl, requestInit);
 }
