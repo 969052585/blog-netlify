@@ -502,7 +502,7 @@ onUnmounted(() => {
   </div>
 
 
-  <article vaul-drawer-wrapper id="vditor">
+  <article vaul-drawer-wrapper id="vditor" >
   </article>
 
 

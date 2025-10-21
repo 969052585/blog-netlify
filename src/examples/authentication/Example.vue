@@ -3,6 +3,7 @@ import {buttonVariants} from '@/lib/registry/new-york/ui/button'
 import {cn} from '@/lib/utils'
 import UserAuthForm from './components/UserAuthForm.vue'
 import BingImage from "./components/BingImage.vue";
+import {toast} from "vue-sonner";
 </script>
 
 <template>
@@ -21,6 +22,7 @@ import BingImage from "./components/BingImage.vue";
       class="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
     <a
         href="javascript:void 0"
+        @click="toast('暂未开放此功能')"
         :class="cn(
         buttonVariants({ variant: 'ghost' }),
         'absolute right-4 top-4 md:right-8 md:top-8',
@@ -32,7 +34,7 @@ import BingImage from "./components/BingImage.vue";
       <div class="absolute inset-0 bg-zinc-900"/>
       <BingImage/>
     </div>
-    <div class="lg:p-8">
+    <div id="auth-form" class="lg:p-8">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div class="flex flex-col space-y-2 text-center">
           <h1 class="text-2xl font-semibold tracking-tight">
@@ -60,8 +62,6 @@ import BingImage from "./components/BingImage.vue";
           </a>
           .
         </p>
-
-
       </div>
     </div>
   </div>

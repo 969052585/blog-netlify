@@ -10,6 +10,7 @@ import {defineConfig} from 'vitepress'
 import {siteConfig} from './theme/config/site'
 import CodeWrapperPlugin from './theme/plugins/codewrapper'
 import ComponentPreviewPlugin from './theme/plugins/previewer'
+import type {HeadConfig} from 'vitepress'
 
 const icon = 'data:image/svg+xml;charset=utf-8,%3Csvg%0A%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%0A%20%20width%3D%2224%22%0A%20%20height%3D%2224%22%0A%20%20viewBox%3D%220%200%2024%2024%22%0A%20%20fill%3D%22none%22%0A%20%20stroke%3D%22currentColor%22%0A%20%20stroke-width%3D%222%22%0A%20%20stroke-linecap%3D%22round%22%0A%20%20stroke-linejoin%3D%22round%22%0A%3E%0A%20%20%3Cpolyline%20points%3D%2216%2018%2022%2012%2016%206%22%20%2F%3E%0A%20%20%3Cpolyline%20points%3D%228%206%202%2012%208%2018%22%20%2F%3E%0A%3C%2Fsvg%3E%0A'
 // const serverProxy = {
@@ -20,27 +21,29 @@ const icon = 'data:image/svg+xml;charset=utf-8,%3Csvg%0A%20%20xmlns%3D%22http%3A
 //     },
 // }
 
+const head = [
+    ['script', {src: 'https://identity.netlify.com/v1/netlify-identity-widget.js', defer: true }],
+    ['link', {rel: 'icon', type: 'image/x-icon', href: icon}],
+    ['link', {rel: 'shortcut icon', href: icon}],
+    ['link', {rel: 'apple-touch-icon', href: icon}],
+    ['link', {rel: 'manifest', href: '/site.webmanifest'}],
+    ['meta', {name: 'theme-color', media: '(prefers-color-scheme: light)', content: 'white'}],
+    ['meta', {name: 'theme-color', media: '(prefers-color-scheme: dark)', content: 'black'}],
+
+    ['meta', {name: 'creator', content: 'Leo Song'}],
+    ['meta', {name: 'theme-color', content: '#41b883'}],
+    ['meta', {name: 'og:type', content: 'website'}],
+    ['meta', {name: 'og:locale', content: 'en'}],
+    ['meta', {name: 'og:site_name', content: siteConfig.name}],
+    ['meta', {name: 'og:image', content: siteConfig.ogImage}],
+    ['meta', {name: 'twitter:image', content: siteConfig.ogImage}],
+] as HeadConfig[]
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     title: siteConfig.name,
     titleTemplate: ':title - ' + siteConfig.name,
     description: siteConfig.description,
-    head: [
-        ['link', {rel: 'icon', type: 'image/x-icon', href: icon}],
-        ['link', {rel: 'shortcut icon', href: icon}],
-        ['link', {rel: 'apple-touch-icon', href: icon}],
-        ['link', {rel: 'manifest', href: '/site.webmanifest'}],
-        ['meta', {name: 'theme-color', media: '(prefers-color-scheme: light)', content: 'white'}],
-        ['meta', {name: 'theme-color', media: '(prefers-color-scheme: dark)', content: 'black'}],
-
-        ['meta', {name: 'creator', content: 'Leo Song'}],
-        ['meta', {name: 'theme-color', content: '#41b883'}],
-        ['meta', {name: 'og:type', content: 'website'}],
-        ['meta', {name: 'og:locale', content: 'en'}],
-        ['meta', {name: 'og:site_name', content: siteConfig.name}],
-        ['meta', {name: 'og:image', content: siteConfig.ogImage}],
-        ['meta', {name: 'twitter:image', content: siteConfig.ogImage}],
-    ],
+    head,
 
     sitemap: {
         hostname: 'https://www.shadcn-vue.com',

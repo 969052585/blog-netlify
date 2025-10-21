@@ -50,6 +50,9 @@
  * SOFTWARE.
  *
  */
+.vditor-outline {
+    max-height: calc(100vh - 80px);
+}
 .vditor {
     --border-color: #d1d5da;
     --second-color: rgba(88, 96, 105, 0.36);
