@@ -248,22 +248,31 @@ onMounted(() => {
       renderLinkDest?(vditor: IVditor, node: ILuteNode, entering: boolean): [string, number]	处理剪贴板中的图片地址
        */
       accept: "image/*",
-      fieldName: 'file',
-      format: ((files: File[], responseText: string) => {
-        let {url, name} = JSON.parse(responseText)
-        let data = {
-          "msg": "",
-          "code": 0,
-          "data": {
-            "succMap": {
-              [name]: url
-            }
-          }
+      multiple: true,
+      async handler(files: File[]): string | Promise<string> | Promise<null> | null {
+        function fileToBase64(file: File) {
+          return new Promise((resolve, reject) => {
+            // 1. 创建 FileReader 实例
+            const reader = new FileReader();
+
+            // 2. 读取文件完成时的回调
+            reader.onload = (event) => {
+              state.editor.insertValue(`![${file.name}](${event.target.result})`);
+              resolve(event.target.result);
+            };
+
+            // 3. 读取失败时的回调
+            reader.onerror = (error) => {
+              console.error(`文件读取失败：${error.message}`)
+              reject(new Error(`文件读取失败：${error.message}`));
+            };
+
+            // 4. 以 DataURL 格式读取文件（自动编码为 Base64）
+            reader.readAsDataURL(file);
+          });
         }
-        return JSON.stringify(data)
-      }) as (files: File[], responseText: string) => string,
-      multiple: false,
-      url: "/file/upload"
+        await Promise.all(files.map(fileToBase64))
+      }
     },
     ...vditorOptions,
     mode: "wysiwyg",
@@ -282,6 +291,8 @@ onMounted(() => {
       });
 
       const config = {childList: true, subtree: true};
+
+      window["editor"] = state.editor
 
       observer.value.observe(document.getElementById("vditor")!, config);
 

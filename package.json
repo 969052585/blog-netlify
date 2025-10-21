@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "vitepress": "vitepress dev",
-    "dev": "netlify dev --debug",
+    "dev": "netlify dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
     "typecheck": "vue-tsc",
