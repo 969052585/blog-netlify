@@ -26,36 +26,36 @@ export function createSingleInstance<T>(supplier: Supplier<T>): SingleInstanceCo
 }
 
 
-function useLimitedFun<F extends Function, P = Parameters<F>, R = ReturnType<F>>(
+function useLimitedFun<F extends (...args: any) => any>(
     origin: F,
     max = 1
 ): F {
     let count = 0;
-    let result: R;
-    return (function (...args) {
-        if (count >= max) return result
+    let result: ReturnType<F>;
+    return function (...args: Parameters<F>): ReturnType<F> {
+        if (count >= max) return result!;
         result = origin(...args);
         count++;
         return result;
-    }) as F
+    } as F; // 类型断言，确认返回类型与F一致
 }
 
 export const loadEnv = useLimitedFun(() => {
     console.log("🏁 loadEnv start...")
     let result = dotenv.config({debug: true, override: true})
-    console.log("✅ loadEnv end...",result.parsed)
+    console.log("✅ loadEnv end...", result.parsed)
     return result
 })
 
 
-export class ServerResponse {
+export class ServerResponse<T = any> {
     static OK = 200;
     static FAIL = 400;
     private readonly code: number;
     private msg?: string;
     private data?: any;
 
-    constructor<T>({ code, msg, data }: { code: number, msg?: string, data?: T }) {
+    constructor({code, msg, data}: { code: number, msg?: string, data?: T }) {
         this.code = code;
         this.msg = msg;
         this.data = data;
@@ -70,34 +70,33 @@ export class ServerResponse {
     }
 
     public static ok<T>(msg?: string, data?: T) {
-        return new ServerResponse({ code: ServerResponse.OK, msg, data });
+        return new ServerResponse({code: ServerResponse.OK, msg, data});
     }
 
-    public static okMsg<T>(msg?: string) {
-        return new ServerResponse({ code: ServerResponse.OK, msg });
+    public static okMsg(msg?: string) {
+        return new ServerResponse({code: ServerResponse.OK, msg});
     }
 
     public static okData<T>(data?: T) {
-        return new ServerResponse({ code: ServerResponse.OK, data });
+        return new ServerResponse({code: ServerResponse.OK, data});
     }
 
     public static fail<T>(msg?: string, data?: T) {
         if (isString(data)) data = (data as string).split("\n") as T
-        return new ServerResponse({ code: ServerResponse.FAIL, msg, data });
+        return new ServerResponse({code: ServerResponse.FAIL, msg, data});
     }
 
-    public static failMsg<T>(msg?: string) {
-        return new ServerResponse({ code: ServerResponse.FAIL, msg });
+    public static failMsg(msg?: string) {
+        return new ServerResponse({code: ServerResponse.FAIL, msg});
     }
 
     public static failData<T>(data?: T) {
-        return new ServerResponse({ code: ServerResponse.FAIL, data });
+        return new ServerResponse({code: ServerResponse.FAIL, data});
     }
 }
 
-export class R extends ServerResponse {}
-
-
+export class R extends ServerResponse {
+}
 
 
 /**
@@ -128,7 +127,7 @@ export const handler: Handler = async (event) => {
         console.error('API 处理错误:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Internal Server Error' })
+            body: JSON.stringify({error: 'Internal Server Error'})
         };
     }
 };
@@ -150,7 +149,7 @@ function createRequestFromEvent(event: any): Request {
     const searchParams = new URLSearchParams();
     if (event.queryStringParameters) {
         Object.entries(event.queryStringParameters).forEach(([key, value]) => {
-            if (value !== undefined) searchParams.append(key, value);
+            if (value !== undefined) searchParams.append(key, value as string);
         });
     }
     const queryStr = searchParams.toString();
@@ -176,7 +175,7 @@ function createRequestFromEvent(event: any): Request {
         });
     }
 
-    if (event.body && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(requestInit.method)) {
+    if (event.body && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(requestInit.method!)) {
         const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
         const isMultipart = contentType.includes('multipart/form-data');
 

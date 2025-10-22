@@ -74,7 +74,7 @@ const toggleDark = useToggle(isDark)
 const links = [
   {
     name: 'GitHub',
-    href: 'https://gitee.com/szh9690/blog',
+    href: 'https://gitee.com/szh9690/blog-netlify',
     icon: RadixIconsGithubLogo,
   },
   // {
