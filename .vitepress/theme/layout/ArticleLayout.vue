@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {docsConfig} from "../config/docs";
 import {ScrollArea} from "@/lib/registry/default/ui/scroll-area";
 import TableOfContent from "../components/TableOfContent.vue";
 import {useData} from "vitepress";
@@ -19,6 +18,7 @@ import {
 } from 'lucide-vue-next'
 import store from '@/stores/articleStore'
 import {Card, CardContent, CardHeader, CardTitle} from "@/lib/registry/new-york/ui/card";
+import type {Article} from '@/stores/siteConfig'
 
 const Clock = [
   Clock1,
@@ -48,25 +48,27 @@ const {frontmatter} = useData()
 
 <template>
 
-  <div class="container flex-1 items-start md:grid md:grid-cols-[minmax(0,1fr)] md:gap-6 lg:grid-cols-[minmax(0,1fr)] lg:gap-10">
+  <div
+      class="container flex-1 items-start md:grid md:grid-cols-[minmax(0,1fr)] md:gap-6 lg:grid-cols-[minmax(0,1fr)] lg:gap-10">
     <aside v-if="false"
-        class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto"
+           class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto"
     >
       <ScrollArea orientation="vertical" class="relative overflow-hidden h-full py-6 pr-6 lg:py-8" :type="'auto'">
         <div class="w-full flex flex-col gap-2">
-          <Card v-for="item in store.sidebarNavItems" :key="item.title" >
+          <Card v-for="item in store.sidebarNavItems" :key="item.title">
             <CardHeader class="pb-2">
               <CardTitle class="justify-start flex items-center text-sm text-foreground/75">
                 {{ item.title }}
               </CardTitle>
             </CardHeader>
             <CardContent class="flex flex-col">
-              <div v-for="(article, _) in item.items" :key="article.Title">
+              <div v-for="(article, _) in item.items as Article[]" :key="article.Title">
                 <div class="text-muted-foreground text-xs">
-                  {{article.CreatedAt}}
+                  {{ (article.CreatedAt || '').substring(0, 19).replace("T", " ") }}
                 </div>
-                <a :href="`/article?Id=${article.Id}`" class="text-base text-wrap line-clamp-2 hover:line-clamp-3 rounded-md whitespace-break-spaces  w-full border-muted bg-popover p-1 hover:first-letter:text-2xl transition-all hover:bg-accent hover:text-accent-foreground">
-                  {{article.Title}}
+                <a :href="`/article?Id=${article.Id}`"
+                   class="text-base text-wrap line-clamp-2 hover:line-clamp-3 rounded-md whitespace-break-spaces  w-full border-muted bg-popover p-1 hover:first-letter:text-2xl transition-all hover:bg-accent hover:text-accent-foreground">
+                  {{ article.Title }}
                 </a>
               </div>
             </CardContent>
@@ -86,12 +88,12 @@ const {frontmatter} = useData()
             </h1>
             <span v-if="false"
                   class="ml-2 rounded-md bg-[#adfa1d] px-1.5 py-0.5 text-xs leading-none text-[#000000] no-underline group-hover:no-underline">
-                {{ frontmatter.label}}
+                {{ frontmatter.label }}
               </span>
           </div>
           <p v-if="store.article.CreatedAt" class="flex items-center justify-center text-muted-foreground border-b-2">
             <component :is="getClock(store.article.CreatedAt.substring(11, 13))" class="h-4 w-4 mr-1"/>
-            {{ store.article.CreatedAt.substring(5, 16) }} 创建
+            {{ (store.article.CreatedAt || '').substring(0, 19).replace("T", " ") }}创建
           </p>
         </div>
         <slot/>
