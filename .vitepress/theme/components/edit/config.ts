@@ -1,6 +1,6 @@
 import Vditor from 'vditor'
 import {drawer} from '@/lib/micro-drawer'
-import {compressToUTF16} from 'lz-string';
+import lzstring  from 'lz-string';
 
 type IOptions = ConstructorParameters<typeof Vditor>[1];
 
@@ -219,7 +219,7 @@ interface Options {
 }
 
 function format(type: string, source: string) {
-    source = compressToUTF16(source)
+    source = lzstring.compressToUTF16(source)
     let url = 'https://web9690.netlify.app/tools/001_代码格式化'
     // url  = 'http://localhost:5173/tools/在线格式化代码'
     drawer(`${url}?type=${type}&code=${source}`,'代码格式化')

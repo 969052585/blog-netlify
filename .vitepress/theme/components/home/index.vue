@@ -80,7 +80,7 @@ function extractPlainTextFromMarkdown(markdown: string) {
         <CardFooter class="flex justify-between items-center p-4 pt-0 pb-2">
           <div class="text-muted-foreground/80 flex items-center">
             <CalendarClock class="mr-1 " :size="16"/>
-            {{ article.UpdatedAt || article.CreatedAt }} · {{
+            {{ (article.UpdatedAt || article.CreatedAt || '').substring(0,19).replace("T",' ') }} · {{
               site.categories.value
                   .find(item => item.Code === article.CategoryCode && item.ModuleCode === article.ModuleCode)?.Name
             }}
