@@ -214,7 +214,7 @@ const observer = ref<MutationObserver>()
 const optionalTags = computed(() => site.tags.value.filter(({Code}) => !state.tagCodes.includes(Code)))
 
 onMounted(() => {
-  if (import.meta.env.SSR) return
+
 
   const params = new URLSearchParams(location.search);
   const id = params.get('id');

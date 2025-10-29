@@ -1,8 +1,10 @@
-import {markRaw, reactive, ref} from "vue";
+import {markRaw} from "vue";
+import type {Reactive, Ref} from "@vue/reactivity";
+import {reactive, ref} from "@vue/reactivity";
 import * as api from "@/lib/api";
 import {groupBy, keyBy, mapValues} from "lodash-es";
-import {bus} from '@/lib/utils'
 import {useTabManager} from "@/lib/hooks";
+import {toast} from "vue-sonner";
 
 
 type ModuleGroup = {
@@ -85,7 +87,10 @@ type Tag = {
 type CheckedModule = Module["Code"]
 type CheckedQuery = Record<keyof Pick<Article, "Year" | "CategoryCode">, any>
 
+
 function useSiteConfig() {
+    const user = ref({} as NetlifyUser)
+
     const categories = ref<Category[]>([])
     const checkModule = ref<CheckedModule>()
     const checkedQuery = reactive<CheckedQuery>({Year: '', CategoryCode: ''})
@@ -108,6 +113,37 @@ function useSiteConfig() {
         label: "私密",
         values: []
     }] as ModuleGroup[])
+
+    function getUser() {
+        if (import.meta.env.SSR) return
+        if (window === void 0) return
+        if (window.netlifyIdentity === void 0) return
+
+        const clearUser = () => user.value = {} as NetlifyUser
+        const setUser = (u: NetlifyUser) => {
+            user.value = markRaw(u) as NetlifyUser
+            window.netlifyIdentity!.close()
+            toast.success((u.user_metadata!.full_name || '') + "登录成功")
+        }
+        window.netlifyIdentity.off("logout", clearUser)
+        window.netlifyIdentity.off("login", setUser)
+        window.netlifyIdentity.on("logout", clearUser)
+        window.netlifyIdentity.on("login", setUser)
+        window.netlifyIdentity.init({logo: false})
+        // window.netlifyIdentity.refresh()
+        let u = window.netlifyIdentity.currentUser()
+        if (u) user.value = markRaw(u)
+    }
+
+    async function logout() {
+        await window.netlifyIdentity!.logout()
+        toast.success("退出登录成功")
+    }
+
+    function login() {
+        window.netlifyIdentity!.open('login')
+    }
+
 
     function setCheckedModule(value: CheckedModule) {
         if (checkModule.value === value) return
@@ -189,6 +225,8 @@ function useSiteConfig() {
     }
 
     return {
+        user,
+        getUser,
         page,
         articleDrafts,
         checkModule,
@@ -198,6 +236,8 @@ function useSiteConfig() {
         setCheckedModule,
         articles,
         loadTags,
+        logout,
+        login,
         modules,
         addTag,
         checkedQuery,
@@ -213,7 +253,35 @@ function useSiteConfig() {
     }
 }
 
-type Store = ReturnType<typeof useSiteConfig>
+interface SiteConfig {
+    user: Ref<NetlifyUser>;
+    page: Reactive<Page>;
+    getUser: () => Promise<void>;
+    logout: () => Promise<void>;
+    login: () => Promise<void>;
+    articleDrafts: Ref<ArticleDraft[] | undefined>;
+    checkModule: Ref<CheckedModule | undefined>;
+    tags: Ref<Tag[] | undefined>;
+    openLoginPage: () => void;
+    statistics: Reactive<Statistics>;
+    setCheckedModule: (value: CheckedModule) => void;
+    articles: Ref<Article[] | undefined>;
+    loadTags: () => Promise<void>;
+    modules: Ref<ModuleGroup[]>;
+    addTag: (tag: Partial<Tag>) => Promise<void>;
+    checkedQuery: Reactive<CheckedQuery>;
+    categories: Ref<Category[]>;
+    addCategory: (category: Partial<Category>) => Promise<void>;
+    loadStatistics: (model: string, field: string) => Promise<void>;
+    loadCategories: () => Promise<void>;
+    loadPageArticles: () => Promise<void>;
+    moduleCategories: Ref<Record<Module["Code"], Category[]>>;
+    loadArticleDrafts: () => Promise<void>;
+    loadModule: () => Promise<void>;
+    loadModuleCategories: (moduleCode: Module["Code"]) => Promise<void>;
+}
+
+type Store = SiteConfig
 
 export type {
     ArticleTag,

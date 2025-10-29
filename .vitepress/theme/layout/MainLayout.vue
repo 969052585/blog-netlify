@@ -14,12 +14,13 @@ import {Toaster as DefaultToaster} from '@/lib/registry/default/ui/toast'
 import {Toaster as NewYorkSonner} from '@/lib/registry/new-york/ui/sonner'
 import {Toaster as NewYorkToaster} from '@/lib/registry/new-york/ui/toast'
 import {TooltipProvider} from '@/lib/registry/new-york/ui/tooltip'
+import UserNav from './UserNav.vue'
 
 import {useConfigStore} from '@/stores/config'
 import {useMagicKeys, useToggle} from '@vueuse/core'
 import Circle from '~icons/radix-icons/circle'
 
-import File from '~icons/radix-icons/file'
+import {FileIcon} from '@radix-icons/vue'
 import RadixIconsGithubLogo from '~icons/radix-icons/github-logo'
 import RadixIconsMoon from '~icons/radix-icons/moon'
 import RadixIconsSun from '~icons/radix-icons/sun'
@@ -141,7 +142,7 @@ function log() {
                   v-for="route in [docsConfig.mainNav[0]]"
                   :key="route.title"
                   :href="route.href"
-                  :target="route.external ? '_target' : undefined"
+                  :target="route.external ? '_target' : void 0"
                   class="transition-colors hover:text-foreground/80 text-foreground/60"
                   :class="{
                   'font-semibold !text-foreground': $route.path === `${route.href}.html` || $route.path === `${route.href}`,
@@ -209,6 +210,7 @@ function log() {
                 <component :is="link.icon" class="w-5 h-5"/>
               </Button>
 
+
               <ClientOnly>
                 <Button
                     class="w-9 h-9"
@@ -222,7 +224,9 @@ function log() {
                       class="w-5 h-5 text-foreground"
                   />
                 </Button>
+                <UserNav/>
               </ClientOnly>
+
             </nav>
           </div>
         </div>
@@ -316,7 +320,7 @@ function log() {
                     class="py-3"
                     @select="handleSelectModule(module)"
                 >
-                  <File class="mr-2 h-5 w-5"/>
+                  <FileIcon class="mr-2 h-5 w-5"/>
                   <span>{{ module.Name }}</span>
                 </CommandItem>
               </CommandGroup>
