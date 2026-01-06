@@ -53,7 +53,7 @@ onMounted(() => {
 })
 
 const {frontmatter, isDark} = useData()
-const [DefineNavMenu, UseNavMenu] = createTemplateHook()
+const [DefineNavMenu, UseNavMenu] = createTemplateHook<{ modules: Module[] }>()
 const $route = useRoute()
 const $router = useRouter()
 
@@ -198,17 +198,17 @@ function log() {
 
             <nav class="flex items-center">
               <ThemePopover/>
-<!--              <Button-->
-<!--                  v-for="link in links"-->
-<!--                  :key="link.name"-->
-<!--                  as="a"-->
-<!--                  class="w-9 h-9"-->
-<!--                  :href="link.href" target="_blank"-->
-<!--                  :variant="'ghost'"-->
-<!--                  :size="'icon'"-->
-<!--              >-->
-<!--                <component :is="link.icon" class="w-5 h-5"/>-->
-<!--              </Button>-->
+              <!--              <Button-->
+              <!--                  v-for="link in links"-->
+              <!--                  :key="link.name"-->
+              <!--                  as="a"-->
+              <!--                  class="w-9 h-9"-->
+              <!--                  :href="link.href" target="_blank"-->
+              <!--                  :variant="'ghost'"-->
+              <!--                  :size="'icon'"-->
+              <!--              >-->
+              <!--                <component :is="link.icon" class="w-5 h-5"/>-->
+              <!--              </Button>-->
 
 
               <ClientOnly>

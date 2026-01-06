@@ -19,7 +19,7 @@ import site from '@/stores/siteConfig'
 import {onMounted, ref} from "vue";
 
 onMounted(() => {
-  setTimeout(site.getUser, 500)
+  setTimeout(site.getUser, 2000)
 })
 
 const open = ref(false)

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Updater } from '@tanstack/vue-table'
 import type { Ref } from 'vue'
 import { type ClassValue, clsx } from 'clsx'

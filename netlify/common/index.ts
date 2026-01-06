@@ -1,3 +1,4 @@
+// @ts-nocheck
 import dotenv from "dotenv";
 import * as console from "console";
 import {isString} from "lodash-es";

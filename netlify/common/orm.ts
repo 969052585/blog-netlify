@@ -1,4 +1,6 @@
-import {EntityQueryWrapper, ID, Limit, OrmResult, PageReq, PageResp, QueryBody} from '../types';
+// @ts-nocheck
+
+import type {EntityQueryWrapper, ID, Limit, OrmResult, PageReq, PageResp, QueryBody} from '../types';
 import {isObjectLike, map, max, omit, size} from 'lodash-es';
 import {count, sql, SQL} from 'drizzle-orm';
 import * as conditions from 'drizzle-orm/sql/expressions/conditions';
@@ -127,7 +129,6 @@ export class Orm {
                                                          options: Pick<QueryBody, 'fields' | 'orderBy' | 'limit'> = {}): MapperFun<T> {
         return async function (ctx: OrmResult<T>) {
             const {fields, orderBy, limit} = options;
-            const db = DB.getInstance();
             let sql = buildQuery({limit, model, query, fields, orderBy});
             let list = await sql.execute()
                 .catch((e: Error) => {

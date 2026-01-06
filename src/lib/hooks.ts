@@ -1,5 +1,5 @@
-import {customRef, defineComponent,onMounted, onUnmounted, ref} from "vue";
-import type {Slot} from 'vue'
+import {customRef, defineComponent, onMounted, onUnmounted, ref} from "vue";
+import type {Slot, Component,DefineConponent} from 'vue'
 import {isFunction} from "lodash-es";
 
 const useBoolean = (initialValue = false) => {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {markRaw} from "vue";
 import type {Reactive, Ref} from "@vue/reactivity";
 import {reactive, ref} from "@vue/reactivity";
@@ -94,7 +95,7 @@ function useSiteConfig() {
     const categories = ref<Category[]>([])
     const checkModule = ref<CheckedModule>()
     const checkedQuery = reactive<CheckedQuery>({Year: '', CategoryCode: ''})
-    const page = reactive<Page>({current: 1, size: 3})
+    const page = reactive<Page>({current: 1, size: 6})
     const statistics = reactive<Statistics>({YearArticle: {}, CategoryArticle: {}})
     const articles = ref<Article[]>()
     const articleDrafts = ref<ArticleDraft[]>()

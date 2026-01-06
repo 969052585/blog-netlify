@@ -19,6 +19,7 @@ import {
 import store from '@/stores/articleStore'
 import {Card, CardContent, CardHeader, CardTitle} from "@/lib/registry/new-york/ui/card";
 import type {Article} from '@/stores/siteConfig'
+import Comment from './Comment.vue'
 
 const Clock = [
   Clock1,
@@ -97,6 +98,7 @@ const {frontmatter} = useData()
           </p>
         </div>
         <slot/>
+        <Comment/>
       </div>
 
       <div class="hidden text-sm xl:block">

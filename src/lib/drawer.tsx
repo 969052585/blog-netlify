@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type {VNode, VNodeArrayChildren} from "vue";
 import {createApp, defineComponent, getCurrentInstance, onMounted, onUnmounted, ref} from "vue";
 import {X} from 'lucide-vue-next'
