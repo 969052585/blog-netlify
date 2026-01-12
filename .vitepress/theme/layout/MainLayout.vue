@@ -166,16 +166,16 @@ function log() {
                     href="javascript:void 0"
                     class="transition-colors hover:text-foreground/80 text-foreground/60"
                     :class="{
-                  'font-semibold !text-foreground': site.checkModule.value === module.Code
+                  'font-semibold !text-foreground': site.checkModule === module.Code
                 }"
                 >
                   {{ module.Name }}
                 </a>
               </DefineNavMenu>
               <UseNavMenu :modules="[{Code: '',Name: '首页'}]"/>
-              <UseNavMenu :modules="site.modules.value[1].values"/>
+              <UseNavMenu :modules="site.modules[1].values"/>
               <UseNavMenu v-if="ApiDataMap.getInstance().get()[`LAST-VERIFY-TIME`]"
-                          :modules="site.modules.value[2].values"/>
+                          :modules="site.modules[2].values"/>
             </nav>
           </div>
           <MobileNav/>
@@ -311,8 +311,8 @@ function log() {
             >
               <CommandGroup heading="分类">
                 <CommandItem
-                    v-for="(module,i) in [...site.modules.value[1].values,
-                    //...site.modules.value[2].values
+                    v-for="(module,i) in [...site.modules[1].values,
+                    //...site.modules[2].values
                   ] as Module[]"
                     :key="module.Code"
                     :heading="module.Code"

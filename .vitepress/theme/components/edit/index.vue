@@ -211,7 +211,7 @@ const length = ref(0)
 const settingShow = ref(false)
 const observer = ref<MutationObserver>()
 // 可选的
-const optionalTags = computed(() => site.tags.value.filter(({Code}) => !state.tagCodes.includes(Code)))
+const optionalTags = computed(() => site.tags.filter(({Code}) => !state.tagCodes.includes(Code)))
 
 onMounted(() => {
 
@@ -562,14 +562,14 @@ onUnmounted(() => {
         </SelectTrigger>
         <SelectContent class="px-1">
           <SelectGroup>
-            <SelectLabel>{{ site.modules.value[1].label }}</SelectLabel>
-            <SelectItem v-for="(item, index) in site.modules.value[1].values" :key="index" :value="item.Code">
+            <SelectLabel>{{ site.modules[1].label }}</SelectLabel>
+            <SelectItem v-for="(item, index) in site.modules[1].values" :key="index" :value="item.Code">
               {{ item.Name }}
             </SelectItem>
           </SelectGroup>
           <SelectGroup>
-            <SelectLabel>{{ site.modules.value[2].label }}</SelectLabel>
-            <SelectItem v-for="(item, index) in site.modules.value[2].values" :key="index" :value="item.Code">
+            <SelectLabel>{{ site.modules[2].label }}</SelectLabel>
+            <SelectItem v-for="(item, index) in site.modules[2].values" :key="index" :value="item.Code">
               {{ item.Name }}
             </SelectItem>
           </SelectGroup>
@@ -584,10 +584,10 @@ onUnmounted(() => {
         </SelectTrigger>
         <SelectContent>
           <div class="min-h-12 text-secondary-foreground/50 flex items-center justify-center"
-               v-if="!site.categories.value.length">
+               v-if="!site.categories.length">
             暂无数据
           </div>
-          <SelectItem v-else v-for="(category,i) in site.categories.value" :key="i" :value="category.Code">
+          <SelectItem v-else v-for="(category,i) in site.categories" :key="i" :value="category.Code">
             {{ category.Name }}
           </SelectItem>
         </SelectContent>
@@ -602,7 +602,7 @@ onUnmounted(() => {
 
       <TagsInput class="border-none pl-0" v-model="state.tagCodes">
         <TagsInputItem class="h-7"
-                       v-for="tag in site.tags.value.filter(({Code}) => state.tagCodes.includes(Code))"
+                       v-for="tag in site.tags.filter(({Code}) => state.tagCodes.includes(Code))"
                        :key="tag.Code" :value="tag.Name">
           <TagsInputItemText/>
           <TagsInputItemDelete/>

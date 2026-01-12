@@ -38,7 +38,7 @@ import site from "@/stores/siteConfig";
               for="paypal"
               class="flex flex-col items-center justify-between rounded-md  border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
           >
-            <div class="text-base hover:font-bold">{{site.categories.value.length}}</div>
+            <div class="text-base hover:font-bold">{{site.categories.length}}</div>
             <div class="text-secondary-foreground">
               分类
             </div>
@@ -49,7 +49,7 @@ import site from "@/stores/siteConfig";
               for="apple"
               class="flex flex-col items-center justify-between rounded-md  border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
           >
-            <div class="text-base hover:font-bold">{{site.tags.value.length}}</div>
+            <div class="text-base hover:font-bold">{{site.tags.length}}</div>
             <div class="text-secondary-foreground">
               标签
             </div>

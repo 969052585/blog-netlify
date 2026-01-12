@@ -33,7 +33,7 @@ function setCheckQuery(value: string) {
     </CardHeader>
     <CardContent class="flex flex-col">
       <div @click="setCheckQuery(category.Code)"
-           v-for="(category) in site.categories.value.filter(item => Boolean(item.Name))"
+           v-for="(category) in site.categories.filter(item => Boolean(item.Name))"
            :key="`${category.ModuleCode}_${category.Code}`"
            :class="cn(`flex items-center hover:scale-[1.02] hover:px-2 transition-all
           justify-between rounded-md  border-muted bg-popover p-1 hover:bg-accent

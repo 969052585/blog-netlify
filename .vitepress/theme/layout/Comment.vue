@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto py-8">
+  <div v-show="state.done" class="max-w-4xl mx-auto py-8">
     <h3 class="text-xl font-semibold mb-6">全部评论 ({{ comments.length }})</h3>
     <div class="space-y-6">
       <!-- 评论项 -->
@@ -59,8 +59,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Reply, Share2, Heart } from 'lucide-vue-next';
+import {Article} from "../../../src/stores/siteConfig";
+import {reactive} from "vue";
+
+
+const state = reactive({
+  done: false,
+})
+
+setTimeout(() => state.done = true, 3000)
 
 const comments = [
   {
@@ -93,4 +102,8 @@ const comments = [
 ];
 
 const hasMore = true;
+
+defineProps<{
+  readonly article: Article
+}>()
 </script>

@@ -21,7 +21,7 @@ onMounted(() => {
     </CardHeader>
     <CardContent class="flex flex-wrap gap-2">
       <div
-          v-for="tag in site.tags.value"
+          v-for="tag in site.tags"
           :key="tag.Code"
           :class="cn(buttonVariants({  size: 'xs',variant: 'outline' }), `hover:scale-105 transition-all bg-gray-200 dark:text-gray-800 dark:hover:text-gray-200`)">
         {{ tag.Name }}

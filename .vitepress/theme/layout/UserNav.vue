@@ -27,14 +27,14 @@ const open = ref(false)
 
 <template>
   <DropdownMenu v-model:open="open" @update:open="v => {
-    if(v && !site.user.value.id) {
+    if(v && !site.user.id) {
       open = false
     }
   }">
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="relative h-8 w-8 rounded-full">
-        <Avatar v-if="site.user.value.id" class="h-9 w-9">
-          <AvatarImage :src="site.user.value.user_metadata.avatar_url" alt="用户"/>
+        <Avatar v-if="site.user.id" class="h-9 w-9">
+          <AvatarImage :src="site.user.user_metadata.avatar_url" alt="用户"/>
           <AvatarFallback>用户</AvatarFallback>
         </Avatar>
         <Avatar v-else @click="site.login" class="h-9 w-9">
@@ -43,14 +43,14 @@ const open = ref(false)
         </Avatar>
       </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent v-if="site.user.value.id" class="w-56" align="end">
+    <DropdownMenuContent v-if="site.user.id" class="w-56" align="end">
       <DropdownMenuLabel class="font-normal flex">
         <div class="flex flex-col space-y-1">
           <p class="text-sm font-medium leading-none">
-            {{ site.user.value.user_metadata?.full_name }}
+            {{ site.user.user_metadata?.full_name }}
           </p>
           <p @click="" class="text-xs leading-none text-muted-foreground">
-            {{ site.user.value.email }}
+            {{ site.user.email }}
           </p>
         </div>
       </DropdownMenuLabel>

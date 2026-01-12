@@ -98,7 +98,7 @@ const {frontmatter} = useData()
           </p>
         </div>
         <slot/>
-        <Comment/>
+        <Comment :article="store.article"/>
       </div>
 
       <div class="hidden text-sm xl:block">

@@ -64,7 +64,7 @@ function extractPlainTextFromMarkdown(markdown: string) {
     </div>
     <!-- 中间内容区 -->
     <div class="w-full md:w-2/4 p-4 ">
-      <Card v-for="(article,i) in site.articles.value" :key="i" :class="{'mt-2': i > 0}">
+      <Card v-for="(article,i) in site.articles" :key="i" :class="{'mt-2': i > 0}">
         <CardContent v-if="article.Cover" class="p-0">
           <img alt="图片" class="w-full max-h-[300px]" :src="article.Cover">
         </CardContent>
@@ -81,7 +81,7 @@ function extractPlainTextFromMarkdown(markdown: string) {
           <div class="text-muted-foreground/80 flex items-center">
             <CalendarClock class="mr-1 " :size="16"/>
             {{ (article.UpdatedAt || article.CreatedAt || '').substring(0,19).replace("T",' ') }} · {{
-              site.categories.value
+              site.categories
                   .find(item => item.Code === article.CategoryCode && item.ModuleCode === article.ModuleCode)?.Name
             }}
           </div>
