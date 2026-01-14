@@ -149,6 +149,7 @@ export const list = <T extends Record<string, any>>(model: string, query: Query<
 })
 
 export const one = <T extends Record<string, any>>(model: string, id: string) => axios.get<T>(`/api/${model}/${id}`)
+export const exist = <T extends boolean>(model: string, id: string) => axios.get<T>(`/api/exist/${model}/${id}`)
 export const update: AxiosInstance['put'] = (model, data) => axios.put(`/api/${model}`, data)
 export const remove = (model: string, id: number | number[]) => Array.isArray(id) ? axios.delete(`/api/${model}`, id) : axios.delete(`/api/${model}/${id}`)
 

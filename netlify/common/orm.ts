@@ -201,6 +201,7 @@ export class Orm {
             let sql = db.insert(model).values(data).returning();
             console.log('insert sql: ', sql.toSQL());
             const pg = await sql.execute();
+            console.log("13456",pg)
             let result = { } as R
             if (Array.isArray(pg)) {
                 result.Id = max(map(pg,"Id"))

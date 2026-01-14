@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Context, Hono} from 'hono';
 import {R} from '../common';
 import {Orm, PgSelect} from '../common/orm';
@@ -32,6 +33,14 @@ app.get('/:model/:id', async (c: Context) => {
     return c.json(data ? R.okData(data) : R.fail(error, stack));
 });
 
+
+app.get('/exist/:model/:id', async (c: Context) => {
+    const {model, id} = c.req.param();
+    const result = {};
+    await Orm.exist(schema[model], {Id: id})(result);
+    const {data: exist, stack, meta, error} = result as OrmResult<boolean>;
+    return c.json(R.okData(exist))
+});
 
 // 查询所有
 app.get('/:model', async (c: Context) => {

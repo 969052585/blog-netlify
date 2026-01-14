@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ScrollArea} from "@/lib/registry/default/ui/scroll-area";
+import {ScrollArea} from "../../../src/lib/registry/default/ui/scroll-area";
 import TableOfContent from "../components/TableOfContent.vue";
 import {useData} from "vitepress";
 import {
@@ -14,15 +14,23 @@ import {
   Clock6,
   Clock7,
   Clock8,
+  Clock9,
   CloudDownload,
   FileStack,
+  Heart,
   MessageSquareText,
-  Clock9, Heart, Share2
+  Share2
 } from 'lucide-vue-next'
-import store from '@/stores/articleStore'
-import {Card, CardContent, CardHeader, CardTitle} from "@/lib/registry/new-york/ui/card";
-import type {Article} from '@/stores/siteConfig'
+import store from '../../../src/stores/articleStore'
+import {Card, CardContent, CardHeader, CardTitle} from "../../../src/lib/registry/new-york/ui/card";
+import type {Article} from '../../../src/stores/siteConfig'
+import {downloadTextAsFile} from '../../../src/lib/utils'
 import Comment from './Comment.vue'
+
+
+function download() {
+  downloadTextAsFile(store.article.Content, store.article.Title + ".md")
+}
 
 const Clock = [
   Clock1,
@@ -100,21 +108,30 @@ const {frontmatter} = useData()
               <component :is="getClock(store.article.CreatedAt.substring(11, 13))" class="h-4 w-4 mr-1"/>
               {{ (store.article.CreatedAt || '').substring(0, 19).replace("T", " ") }}
             </p>
-            <p title="收藏数量" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
-              <Heart  class="mr-1 h-4 w-4" />
-              收藏(100)
+            <p title="收藏数量"
+               class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <Heart class="mr-1 h-4 w-4"/>
+              收藏({{store.stats.Like}})
             </p>
-            <p  title="分享文章" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
-              <Share2 class="mr-1 h-4 w-4" />分享(5)
+            <p title="分享文章"
+               class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <Share2 class="mr-1 h-4 w-4"/>
+              分享({{store.stats.Share}})
             </p>
-            <p title="跳到评论" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
-              <MessageSquareText class="mr-1 h-4 w-4" />评论(5)
+            <p title="跳到评论"
+               class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <MessageSquareText class="mr-1 h-4 w-4"/>
+              评论({{store.stats.Comment}})
             </p>
-            <p title="文章合集" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
-              <FileStack class="mr-1 h-4 w-4" />合集(5)
+            <p title="文章合集"
+               class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <FileStack class="mr-1 h-4 w-4"/>
+              合集({{store.stats.Collection}})
             </p>
-            <p title="下载文章" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
-              <CloudDownload class="mr-1 h-4 w-4" />下载(5)
+            <p title="下载文章" @click="download"
+               class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <CloudDownload class="mr-1 h-4 w-4"/>
+              下载({{store.stats.Download}})
             </p>
 
           </div>

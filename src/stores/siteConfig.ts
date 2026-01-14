@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { markRaw, reactive } from "vue";
+import {markRaw, reactive} from "vue";
 import * as api from "@/lib/api";
-import { groupBy, keyBy, mapValues } from "lodash-es";
-import { useTabManager } from "@/lib/hooks";
-import { toast } from "vue-sonner";
+import {groupBy, keyBy, mapValues} from "lodash-es";
+import {useTabManager} from "@/lib/hooks";
+import {toast} from "vue-sonner";
 
 // 所有类型定义保持不变（省略，和之前一致）
 type ModuleGroup = {
@@ -84,6 +84,15 @@ type Tag = {
     CreatedAt: string;
     UpdatedAt: string | null;
 };
+type ArticleStats = {
+    Id: number;
+    Like: number;
+    Share: number;
+    Comment: number,
+    Collection: number,
+    Download: number,
+    Read: number
+};
 type CheckedModule = Module["Code"];
 type CheckedQuery = Record<keyof Pick<Article, "Year" | "CategoryCode">, any>;
 
@@ -92,11 +101,12 @@ function useSiteConfig() {
     const state = reactive({
         // 数据状态
         user: {} as NetlifyUser,
-        page: { current: 1, size: 6 } as Page,
+        stats: {} as ArticleStats,
+        page: {current: 1, size: 6} as Page,
         modules: [
-            { values: [{ Id: 0, Name: "全站", Code: "全站" }] },
-            { label: "公开", values: [] },
-            { label: "私密", values: [] },
+            {values: [{Id: 0, Name: "全站", Code: "全站"}]},
+            {label: "公开", values: []},
+            {label: "私密", values: []},
         ] as ModuleGroup[],
         categories: [] as Category[],
         moduleCategories: {} as Record<Module["Code"], Category[]>,
@@ -104,24 +114,38 @@ function useSiteConfig() {
         articleDrafts: undefined as ArticleDraft[] | undefined,
         tags: [] as Tag[],
         checkModule: undefined as CheckedModule | undefined,
-        checkedQuery: { Year: "", CategoryCode: "" } as CheckedQuery,
-        statistics: { YearArticle: {}, CategoryArticle: {} } as Statistics,
+        checkedQuery: {Year: "", CategoryCode: ""} as CheckedQuery,
+        statistics: {YearArticle: {}, CategoryArticle: {}} as Statistics,
 
         // 先占位方法（后续赋值）
-        getUser: () => {},
-        logout: async () => {},
-        login: () => {},
-        openLoginPage: () => {},
-        setCheckedModule: (value: CheckedModule) => {},
-        addCategory: async (category: Partial<Category>) => {},
-        loadPageArticles: async () => {},
-        loadArticleDrafts: async () => {},
-        addTag: async (tag: Partial<Tag>) => {},
-        loadModuleCategories: async (moduleCode: Module["Code"]) => {},
-        loadCategories: async () => {},
-        loadModule: async () => {},
-        loadTags: async () => {},
-        loadStatistics: async (model: string, field: string) => {},
+        getUser: () => {
+        },
+        logout: async () => {
+        },
+        login: () => {
+        },
+        openLoginPage: () => {
+        },
+        setCheckedModule: (value: CheckedModule) => {
+        },
+        addCategory: async (category: Partial<Category>) => {
+        },
+        loadPageArticles: async () => {
+        },
+        loadArticleDrafts: async () => {
+        },
+        addTag: async (tag: Partial<Tag>) => {
+        },
+        loadModuleCategories: async (moduleCode: Module["Code"]) => {
+        },
+        loadCategories: async () => {
+        },
+        loadModule: async () => {
+        },
+        loadTags: async () => {
+        },
+        loadStatistics: async (model: string, field: string) => {
+        },
     });
 
     // 2. 定义所有方法（内部操作 state）
@@ -140,7 +164,7 @@ function useSiteConfig() {
         window.netlifyIdentity.off("login", setUser);
         window.netlifyIdentity.on("logout", clearUser);
         window.netlifyIdentity.on("login", setUser);
-        window.netlifyIdentity.init({ logo: false });
+        window.netlifyIdentity.init({logo: false});
         let u = window.netlifyIdentity.currentUser();
         if (u) state.user = markRaw(u);
     }
@@ -181,7 +205,7 @@ function useSiteConfig() {
         let response = await api.page("Article", {
             current: state.page.current,
             size: state.page.size,
-        }, articleQuery, { orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"] }) as {
+        }, articleQuery, {orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"]}) as {
             page: Page;
             list: Article[];
         };
@@ -190,7 +214,7 @@ function useSiteConfig() {
     }
 
     async function loadArticleDrafts() {
-        let list = await api.list("ArticleDraft", {}, { orderBy: ["-CreatedAt"] }) as ArticleDraft[];
+        let list = await api.list("ArticleDraft", {}, {orderBy: ["-CreatedAt"]}) as ArticleDraft[];
         state.articleDrafts = markRaw(list);
     }
 
@@ -200,7 +224,7 @@ function useSiteConfig() {
 
     async function loadModuleCategories(moduleCode: Module["Code"]) {
         if (!moduleCode) throw new Error("分类模块编码不能为空");
-        let list = await api.list<Category>("Category", { ModuleCode: moduleCode });
+        let list = await api.list<Category>("Category", {ModuleCode: moduleCode});
         state.categories = markRaw(list);
         state.moduleCategories[moduleCode] = markRaw(list);
     }
@@ -254,12 +278,15 @@ function useSiteConfig() {
 }
 
 // 更新类型定义（匹配 state 结构）
-interface SiteConfig extends ReturnType<typeof useSiteConfig> {}
+interface SiteConfig extends ReturnType<typeof useSiteConfig> {
+}
+
 type Store = SiteConfig;
 
 // 导出类型
 export type {
     ArticleTag,
+    ArticleStats,
     CheckedModule,
     ModuleGroup,
     Module,

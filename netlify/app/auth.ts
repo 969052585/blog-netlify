@@ -1,3 +1,5 @@
+
+
 import crypto from 'crypto';
 import {Context, Hono} from 'hono';
 import {Orm} from '../common/orm';
@@ -9,6 +11,7 @@ import type {OrmResult} from '../types'
 
 import {sign} from 'hono/jwt';
 import {UserVerifyTimeMap} from "./constant";
+import process from "process";
 
 const app = new Hono();
 
@@ -21,7 +24,7 @@ class AuthDto {
 export const encrypt = (value: string, salt: string) =>
     crypto.pbkdf2Sync(value, salt, 1000, 18, 'sha256').toString('hex');
 
-app.post('/login', async (c: Context & { env: Env }) => {
+app.post('/login', async (c: Context) => {
     let {email, password = ''} = await c.req.json() as AuthDto;
     password = password.trim();
     const result = {};
@@ -30,17 +33,17 @@ app.post('/login', async (c: Context & { env: Env }) => {
     if (!userInfo) return c.json(R.fail(error, stack || meta));
     if (encrypt(password, userInfo.Salt) !== userInfo.Password) return c.json(R.failMsg('用户名或密码不正确'));
     let exp = 3600
-    if (isString(c.env.JWT_CONFIG)) {
-        exp = JSON.parse(c.env.JWT_CONFIG).exp
-    } else if (isObject(c.env.JWT_CONFIG)) {
-        exp = c.env.JWT_CONFIG.exp
+    if (isString(process.env.JWT_CONFIG)) {
+        exp = JSON.parse(process.env.JWT_CONFIG).exp
+    } else if (isObject(process.env.JWT_CONFIG)) {
+        exp = process.env.JWT_CONFIG.exp
     }
     const expiration = Math.floor(new Date().getTime() / 1000) + exp
     const token = await sign({
         email,
         exp: expiration
-    }, c.env.JWT_SECRET);
-    await c.env.TOKEN.put(email, token, {expiration});
+    }, process.env.JWT_SECRET);
+    // await c.env.TOKEN.put(email, token, {expiration});
     const time = new Date().getTime();
     UserVerifyTimeMap.getInstance().set(email, time);
     c.res.headers.append("LAST-VERIFY-TIME", String(time))

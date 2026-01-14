@@ -4,7 +4,7 @@ import {bearerAuth} from "hono/bearer-auth";
 import {UserVerifyTimeMap} from './constant'
 
 async function verifyToken(token: string, c: Context) {
-    let JWT_SECRET = "2222"
+    let JWT_SECRET = process.env.JWT_SECRET
     const payload = await verify(token, JWT_SECRET);
     const {email} = payload
     if (!email) return true
