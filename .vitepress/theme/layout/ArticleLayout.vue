@@ -14,7 +14,10 @@ import {
   Clock6,
   Clock7,
   Clock8,
-  Clock9, FileText
+  CloudDownload,
+  FileStack,
+  MessageSquareText,
+  Clock9, Heart, Share2
 } from 'lucide-vue-next'
 import store from '@/stores/articleStore'
 import {Card, CardContent, CardHeader, CardTitle} from "@/lib/registry/new-york/ui/card";
@@ -92,10 +95,29 @@ const {frontmatter} = useData()
                 {{ frontmatter.label }}
               </span>
           </div>
-          <p v-if="store.article.CreatedAt" class="flex items-center justify-center text-muted-foreground border-b-2">
-            <component :is="getClock(store.article.CreatedAt.substring(11, 13))" class="h-4 w-4 mr-1"/>
-            {{ (store.article.CreatedAt || '').substring(0, 19).replace("T", " ") }}创建
-          </p>
+          <div class="flex justify-center border-b-2 gap-4">
+            <p v-if="store.article.CreatedAt" class="flex items-center justify-center text-muted-foreground">
+              <component :is="getClock(store.article.CreatedAt.substring(11, 13))" class="h-4 w-4 mr-1"/>
+              {{ (store.article.CreatedAt || '').substring(0, 19).replace("T", " ") }}
+            </p>
+            <p title="收藏数量" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <Heart  class="mr-1 h-4 w-4" />
+              收藏(100)
+            </p>
+            <p  title="分享文章" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <Share2 class="mr-1 h-4 w-4" />分享(5)
+            </p>
+            <p title="跳到评论" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <MessageSquareText class="mr-1 h-4 w-4" />评论(5)
+            </p>
+            <p title="文章合集" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <FileStack class="mr-1 h-4 w-4" />合集(5)
+            </p>
+            <p title="下载文章" class="flex items-center hover:text-accent-foreground justify-center text-muted-foreground">
+              <CloudDownload class="mr-1 h-4 w-4" />下载(5)
+            </p>
+
+          </div>
         </div>
         <slot/>
         <Comment :article="store.article"/>

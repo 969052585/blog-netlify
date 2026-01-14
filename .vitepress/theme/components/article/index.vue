@@ -38,6 +38,7 @@ onMounted(async () => {
     },
     after: () => {
       state.done = true
+      window["EDITOR"] = state.editor
       let btn = get(state.editor, 'vditor.toolbar.elements.preview.lastChild') as HTMLElement
       if (btn) btn.click()
       setTimeout(() => {
