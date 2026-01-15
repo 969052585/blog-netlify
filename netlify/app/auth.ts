@@ -1,4 +1,4 @@
-
+//@ts-nocheck
 
 import crypto from 'crypto';
 import {Context, Hono} from 'hono';

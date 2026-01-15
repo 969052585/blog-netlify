@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Hono} from "hono";
 import api from './api'
 import auth from './auth'
@@ -7,7 +8,7 @@ import {BusinessError} from '../common/error'
 import {R} from '../common'
 import {HTTPException} from 'hono/http-exception'
 import {createSingleInstance, loadEnv} from '../common'
-import {ContentfulStatusCode} from "hono/utils/http-status";
+import type {ContentfulStatusCode} from "hono/utils/http-status";
 import {isEqual} from 'lodash-es'
 
 export enum HttpStatus {

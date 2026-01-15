@@ -1,4 +1,4 @@
-import {Context, Hono} from "hono";
+import {type Context, Hono} from "hono";
 import {verify} from 'hono/jwt';
 import {bearerAuth} from "hono/bearer-auth";
 import {UserVerifyTimeMap} from './constant'
