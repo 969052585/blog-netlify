@@ -1,17 +1,14 @@
 import {type Context, Hono} from "hono";
-import {verify} from 'hono/jwt';
 import {bearerAuth} from "hono/bearer-auth";
-import {UserVerifyTimeMap} from './constant'
 
-async function verifyToken(token: string, c: Context) {
-    let JWT_SECRET = process.env.JWT_SECRET
-    const payload = await verify(token, JWT_SECRET);
-    const {email} = payload
-    if (!email) return true
-    let time = new Date().getTime()
-    UserVerifyTimeMap.getInstance().set(email as string, time)
-    c.res.headers.append("LAST-VERIFY-TIME", String(time))
-    return true;
+async function verifyToken(_: string, c: Context) {
+    const header = c.req.header();
+    if (!header) return false
+    // let user = header["x-user"]
+    let exp = header["x-exp"]
+    if (exp.length === 10) exp+="000";
+    c.res.headers.append("EXP-TIME", String(exp))
+    return Number(exp) > new Date().getTime();
 }
 
 export function useBearerAuth(app: Hono<any>) {

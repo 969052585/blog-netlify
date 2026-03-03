@@ -60,5 +60,11 @@ app.get('/check/:email', async (c: Context) => {
     return c.json(R.failMsg("用户不存在"));
 });
 
+app.get('/session', async (c: Context) => {
+    console.log("sssss")
+    return c.json({});
+});
+
+
 
 export default app;

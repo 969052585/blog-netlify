@@ -105,12 +105,13 @@ export class R extends ServerResponse {
  * 将 Netlify Lambda 事件转换为标准 Request 对象并调用 Hono 应用
  *
  * @param event 结合了 Request 和 HandlerEvent 的事件对象，包含请求信息和 Netlify 特定上下文
+ * @param context
  * @returns Promise<HandlerResponse> 标准的 Netlify 响应对象
  */
-export const handler: Handler = async (event) => {
+export const handler: Handler = async (event,context: {clientContext:ClientContext}) => {
     try {
         // 将 Netlify event 转换为标准 Request 对象
-        const request = createRequestFromEvent(event);
+        const request = createRequestFromEvent(event,context.clientContext);
 
         // 调用 Hono 的 fetch 方法
         const response = await App.getInstance().fetch(request);
@@ -134,12 +135,21 @@ export const handler: Handler = async (event) => {
 };
 
 
+interface User {
+    email?: string,
+    exp?: number
+}
+
+interface ClientContext {
+    user?: User
+}
 /**
  * 将 Netlify Lambda 的 event 对象转换为标准的 Request 对象
  * @param event Netlify Lambda 的事件对象
+ * @param context 上下文
  * @returns 标准的 Request 对象
  */
-function createRequestFromEvent(event: any): Request {
+function createRequestFromEvent(event: any, context: ClientContext): Request {
     // 1. 构建完整 URL（修复：保留协议正确性，处理无 x-forwarded-proto 的情况）
     const host = event.headers.host;
     const path = event.path;
@@ -174,6 +184,9 @@ function createRequestFromEvent(event: any): Request {
             const values = Array.isArray(value) ? value : [value.toString()];
             values.forEach(val => requestInit.headers?.append(key, val));
         });
+        const user = context.user || {}
+        requestInit.headers?.append("X-USER",user.email ?? '')
+        requestInit.headers?.append("X-EXP",user.exp ?? 0)
     }
 
     if (event.body && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(requestInit.method!)) {
@@ -185,7 +198,6 @@ function createRequestFromEvent(event: any): Request {
             const buffer = Buffer.from(event.body, 'base64');
 
             if (isMultipart) {
-
                 requestInit.body = buffer.buffer;
             } else {
                 try {
