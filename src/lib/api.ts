@@ -135,7 +135,13 @@ type Query<T extends Record<string, any>> = {
 
 
 export const add: AxiosInstance['post'] = (model, data) => axios.post(`/api/${model}`, data)
-export const addArticle: AxiosInstance['post'] = (data) => axios.post(`/a`, data)
+
+
+export const article = {
+    add: ((data: any) => axios.post(`/a`, data)) as AxiosInstance['post'],
+    update: ((data: any) => axios.put(`/a`, data)) as AxiosInstance['put'],
+}
+
 export const page = (model: string, page: any, query: any, options: any = {}) => axios.post(`/api/page`, {
     model,
     page,

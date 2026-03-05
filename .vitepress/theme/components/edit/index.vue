@@ -63,8 +63,10 @@ const defaultState = {
 type State = typeof defaultState
 
 async function republish() {
-  await api.update("Article", state.article)
+  await api.article.update(state.article)
   const ArticleId = state.article.Id;
+  alert("ArticleId: "+ ArticleId)
+  if(true) return
   let tags = await api.list<ArticleTag>("ArticleTag", {
     ArticleId,
     "TagCode.in": Array.from(new Set([...state.oldTagCodes, ...state.tagCodes])),
@@ -107,11 +109,11 @@ async function publishClick() {
   if (state.article.Id) return republish()
   const {Id: ArticleId} = await api.addArticle<{ Id: number }>(state.article)
   state.article.Id = ArticleId
-  if (state.tagCodes.length) {
-    const articleCodes = state.tagCodes.map(TagCode => ({TagCode, ArticleId}));
-    await api.add("ArticleTag", articleCodes)
-    state.oldTagCodes = Array.from(state.tagCodes)
-  }
+  // if (state.tagCodes.length) {
+  //   const articleCodes = state.tagCodes.map(TagCode => ({TagCode, ArticleId}));
+  //   await api.add("ArticleTag", articleCodes)
+  //   state.oldTagCodes = Array.from(state.tagCodes)
+  // }
   toast.success("文章发布成功")
 }
 
