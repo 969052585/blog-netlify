@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import {Context, Hono} from 'hono';
 import {Orm} from '../common/orm';
 import {User} from '../db/schema';
-import {isString, isObject} from 'lodash-es'
+import {isObject, isString} from 'lodash-es'
 import {R} from '../common';
 
 import type {OrmResult} from '../types'
@@ -60,8 +60,35 @@ app.get('/check/:email', async (c: Context) => {
     return c.json(R.failMsg("用户不存在"));
 });
 
+
+
+// 核心函数：从 Header 生成游客 ID
+const generateGuestId = (req) => {
+    // 1. 提取 Header 核心字段（处理空值，避免 undefined）
+    const userAgent = req.header()['user-agent'] || 'unknown_ua';
+    const ip = req.header()['x-forwarded-for'] || req.ip || 'unknown_ip';
+    const acceptLang = req.header()['accept-language'] || 'unknown_lang';
+    const secChUa = req.header()['sec-ch-ua'] || ''; // 可选字段，空值不影响
+
+    console.log("generateGuestId", userAgent,ip,acceptLang,secChUa)
+
+    // 2. 拼接特征字符串（按固定顺序，避免顺序不同导致哈希结果不同）
+    const featureStr = `${userAgent}|${ip}|${acceptLang}|${secChUa}`;
+
+    // 3. 哈希处理（SHA256 比 MD5 更安全，结果转 16 进制）
+    const hash = crypto.createHash('sha256')
+        .update(featureStr, 'utf8')
+        .digest('hex')
+        .toUpperCase();
+
+    // 4. 生成最终游客 ID（取前16位，加前缀，缩短长度且唯一）
+    return `guest_${hash.substring(0, 16)}`;
+};
+
 app.get('/session', async (c: Context) => {
-    console.log("sssss")
+    const header = c.req.header();
+
+    console.log("session",  generateGuestId(c.req))
     return c.json({});
 });
 

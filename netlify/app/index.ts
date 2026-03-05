@@ -4,6 +4,7 @@ import api from './api'
 import auth from './auth'
 import image from './image'
 import file from './file'
+import article from './article'
 import {BusinessError} from '../common/error'
 import {R} from '../common'
 import {HTTPException} from 'hono/http-exception'
@@ -111,6 +112,7 @@ const App = createSingleInstance(() => {
     app.route(BASE_URL.AUTH, auth);
     app.route(BASE_URL.IMAGE, image);
     app.route(BASE_URL.FILE, file);
+    app.route("/a", article);
     return app
 });
 

@@ -8,3 +8,4 @@ export { default as ArticleTag } from './article-tag';
 export { default as ArticleDraft } from './article-draft';
 export { default as Comment } from './comment';
 export { default as ArticleStats } from './article-stats';
+export { default as Tourist } from './tourist';
