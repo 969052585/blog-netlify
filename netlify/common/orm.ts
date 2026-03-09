@@ -3,8 +3,8 @@
 import type {EntityQueryWrapper, ID, Limit, OrmResult, PageReq, PageResp, QueryBody} from '../types';
 import {isObjectLike, map, max, omit, size} from 'lodash-es';
 import {count, sql, SQL} from 'drizzle-orm';
-import * as conditions from 'drizzle-orm/sql/expressions/conditions';
 import type {BinaryOperator} from 'drizzle-orm/sql/expressions/conditions';
+import * as conditions from 'drizzle-orm/sql/expressions/conditions';
 import {asc, desc} from 'drizzle-orm/sql/expressions/select';
 import type {CreatePgSelectFromBuilderMode} from 'drizzle-orm/pg-core/query-builders/select.types';
 import {BusinessError} from './error';
@@ -14,6 +14,7 @@ import {CommonColumn} from "../db/schema/common";
 import * as console from "console";
 
 const now = sql`now() AT TIME ZONE 'Asia/Shanghai'`;
+const DEFAULT = sql`default`;
 type MapperFun<T> = (ctx: OrmResult<T>) => Promise<void>
 type PgTable = ReturnType<typeof pgTable>
 
@@ -196,7 +197,10 @@ export class Orm {
             const db = DB.getInstance();
             if (!Array.isArray(data)) data = [data];
             if (model[CommonColumn.CreatedAt]) {
-                (data as Array<T>).forEach(data => data[CommonColumn.CreatedAt] = now);
+                (data as Array<T>).forEach(data => {
+                    data[CommonColumn.CreatedAt] = now
+                    if (!data[CommonColumn.Id]) data[CommonColumn.Id] = DEFAULT
+                });
             }
             let sql = db.insert(model).values(data).returning();
             console.log('insert sql: ', sql.toSQL());

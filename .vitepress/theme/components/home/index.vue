@@ -30,6 +30,7 @@ onBeforeUnmount(() => {
   bus.off("CheckedModuleChange")
 })
 function extractPlainTextFromMarkdown(markdown: string) {
+  if (!markdown) return ''
   // 移除标题本身（包括标记）
   let text = markdown.replace(/^(#+)\s.*$/gm, '');
   // 移除加粗、斜体标记

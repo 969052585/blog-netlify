@@ -5,9 +5,13 @@ import {Orm} from "../common/orm";
 import Article from "../db/schema/article";
 import {OrmResult} from "../types";
 import {R} from "../common";
+import {useBearerAuth} from "./middleware";
 
 type Variables = JwtVariables
 const app = new Hono<{ Variables: Variables }>();
+
+
+useBearerAuth(app)
 
 app.put("/", async (c) => {
     const data = await c.req.json();

@@ -35,3 +35,16 @@ HAiOjE3Njg0MTA1MDh9fQ=='
   __lambdaLocal: { onInvocationEnd: undefined }
 }
 ```
+
+```sql
+-- 重置ID
+-- 1. 查看当前表的最大 ID
+SELECT MAX(id) FROM "article";
+
+-- 2. 重置自增序列（替换 <max_id> 为上一步查到的最大值，比如 100）
+-- 若 id 是 serial 类型
+ALTER SEQUENCE article_id_seq RESTART WITH <max_id> + 1;
+
+-- 若 id 是 identity 类型（PostgreSQL 10+）
+ALTER TABLE "article" ALTER COLUMN id RESTART WITH <max_id> + 1;
+```

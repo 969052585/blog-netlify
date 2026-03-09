@@ -107,7 +107,7 @@ async function onKeyDown(e: KeyboardEvent) {
 
 async function publishClick() {
   if (state.article.Id) return republish()
-  const {Id: ArticleId} = await api.addArticle<{ Id: number }>(state.article)
+  const {Id: ArticleId} = await api.article.add<{ Id: number }>(state.article)
   state.article.Id = ArticleId
   // if (state.tagCodes.length) {
   //   const articleCodes = state.tagCodes.map(TagCode => ({TagCode, ArticleId}));
