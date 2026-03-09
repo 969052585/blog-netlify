@@ -218,6 +218,13 @@ export class Orm {
             if (model[CommonColumn.UpdatedAt]) {
                 ([data] as Array<T>).forEach(data => data[CommonColumn.UpdatedAt] = now);
             }
+            if (model[CommonColumn.CreatedAt]) {
+                ([data] as Array<T>).forEach(data => {
+                    if ('string' === typeof data[CommonColumn.CreatedAt]) {
+                        data[CommonColumn.CreatedAt] = new Date(data[CommonColumn.CreatedAt])
+                    }
+                });
+            }
             let sql = db.update(model)
                 .set(omit(data, CommonColumn.Id))
                 .where(conditions.eq(model[CommonColumn.Id], data[CommonColumn.Id]));
