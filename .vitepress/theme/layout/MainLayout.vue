@@ -38,12 +38,14 @@ import type {Module} from '@/stores/siteConfig'
 import site from '@/stores/siteConfig'
 import {bus, getQuery} from '@/lib/utils'
 import {ApiDataMap} from "@/lib/api";
+import {init} from "@/lib/api";
 import {createTemplateHook} from '@/lib/hooks'
 
 
 const {radius, theme} = useConfigStore()
 // Whenever the component is mounted, update the document class list
 onMounted(() => {
+  checkInit()
   document.documentElement.style.setProperty('--radius', `${radius.value}rem`)
   document.documentElement.classList.add(`theme-${theme.value}`)
   bus.on("Unauthorized", site.openLoginPage)
@@ -56,6 +58,15 @@ const {frontmatter, isDark} = useData()
 const [DefineNavMenu, UseNavMenu] = createTemplateHook<{ modules: Module[] }>()
 const $route = useRoute()
 const $router = useRouter()
+
+async function checkInit() {
+  if ($route.data.frontmatter.login) return
+  let result = await init()
+  if (!result) {
+    toast.warning("后端初始化未完成, 请先设置管理员账号")
+    setTimeout(site.openLoginPage, 1500)
+  }
+}
 
 function checkLogin() {
   if (!import.meta.env.SSR) return;

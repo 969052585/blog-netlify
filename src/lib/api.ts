@@ -75,6 +75,13 @@ function newAxiosInstance() {
         if (now - lastVerifyTime > 1000 * 60 * 60 * 6) ApiDataMap.getInstance().remove(key)
         else ApiDataMap.getInstance().set(key, lastVerifyTime)
         try {
+            // "text/plain"  application/json
+            const contentType = response.headers.get("content-type")!
+            if (!(contentType === 'application/json')) {
+                let text = await response.text()
+                resolve!(JSON.parse(text))
+                return promise
+            }
             const resp = await response.json()
             const {msg, code, data} = resp
             if (200 === code) {
@@ -135,6 +142,7 @@ type Query<T extends Record<string, any>> = {
 
 
 export const add: AxiosInstance['post'] = (model, data) => axios.post(`/api/${model}`, data)
+export const init: AxiosInstance['get'] = () => axios.get(`/api/init`)
 
 
 export const article = {

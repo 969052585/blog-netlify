@@ -6,11 +6,19 @@ import {OrmResult, QueryBody} from '../types';
 import type {JwtVariables} from 'hono/jwt';
 import {useBearerAuth} from "./middleware";
 import * as schema from '../db/schema';
+import User from '../db/schema/user';
 import DB from "../db";
 import {count} from "drizzle-orm";
 
 type Variables = JwtVariables
 const app = new Hono<{ Variables: Variables }>();
+
+app.get("/init",async (c: Context) => {
+    const result = {};
+    await Orm.exist(User, {Admin: true})(result);
+    const {data: exist} = result as OrmResult<boolean>;
+    return c.text(exist)
+})
 
 const listHandler = async (c: Context) => {
     const {model, query, ...options} = await c.req.json() as QueryBody;

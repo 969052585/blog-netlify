@@ -1,4 +1,4 @@
-import {pgTable, serial, integer, text, timestamp, varchar} from 'drizzle-orm/pg-core';
+import {pgTable, serial, integer, text,boolean, timestamp, varchar} from 'drizzle-orm/pg-core';
 import {sql} from 'drizzle-orm';
 import type {Columns} from './common';
 import {CommonColumn} from './common';
@@ -9,6 +9,7 @@ const UserColumns: Columns = {
     [CommonColumn.Id]: serial('id').primaryKey(),
     Name: varchar('name', {length: 100}),
     Email: varchar('email', {length: 255}),
+    Admin: boolean('admin').default(false),
     Password: varchar('password', {length: 255}),
     Department: varchar('department', {length: 100}),
     EmployeeType: varchar('employee_type', {length: 50}),
