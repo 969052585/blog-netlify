@@ -97,6 +97,7 @@ async function onSubmit(event: Event) {
                  v-model.trim="state.user.email"
                  auto-complete="email"
                  auto-correct="off"
+                 @keydown.enter="check"
                  class="pr-10"
                  :disabled="isLoading"/>
           <span v-if="!state.checkPass" class="absolute end-0 inset-y-0 flex items-center justify-center px-2">

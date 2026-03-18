@@ -72,6 +72,11 @@ export function downloadTextAsFile(content: string | any, fileName: string, mime
     }
 }
 
+export function hasQuery(key: string) {
+    if (import.meta.env.SSR) return ''
+    return new URLSearchParams(location.search).has(key)
+}
+
 export function getQuery(key: string) {
   if (import.meta.env.SSR) return ''
   return new URLSearchParams(location.search).get(key) || ''

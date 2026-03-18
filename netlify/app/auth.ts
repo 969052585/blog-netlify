@@ -5,7 +5,7 @@ import {Context, Hono} from 'hono';
 import {Orm} from '../common/orm';
 import {User} from '../db/schema';
 import {isObject, isString} from 'lodash-es'
-import {R} from '../common';
+import {createSingleInstance, R} from '../common';
 
 import type {OrmResult} from '../types'
 
@@ -13,7 +13,9 @@ import {sign} from 'hono/jwt';
 import {UserVerifyTimeMap} from "./constant";
 import process from "process";
 
+
 const app = new Hono();
+
 
 
 class AuthDto {
@@ -23,6 +25,71 @@ class AuthDto {
 
 export const encrypt = (value: string, salt: string) =>
     crypto.pbkdf2Sync(value, salt, 1000, 18, 'sha256').toString('hex');
+
+
+const System = createSingleInstance(() => ({
+    init: false
+}))
+
+app.post("/init", async (c: Context) => {
+    if (System.getInstance().init) return c.json(R.fail('系统已被初始化'));
+    try {
+        // 检查是否已经存在管理员账号
+        const checkResult = {};
+        await Orm.exist(User, {Admin: true})(checkResult);
+        const {data: exist} = checkResult as OrmResult<boolean>;
+
+        if (exist) {
+            System.getInstance().init = true
+            return c.json(R.failMsg('管理员账号已存在，请直接登录'));
+        }
+
+        // 获取请求数据
+        const {name, email, password} = await c.req.json();
+
+        // 验证必填字段
+        if (!email || !password || !name) {
+            return c.json(R.failMsg('请填写完整信息'));
+        }
+
+        // 检查邮箱是否已被使用
+        const emailCheckResult = {};
+        await Orm.exist(User, {Email: email})(emailCheckResult);
+        const {data: emailExist} = emailCheckResult as OrmResult<boolean>;
+
+        if (emailExist) {
+            System.getInstance().init = true
+            return c.json(R.failMsg('该邮箱已被使用'));
+        }
+
+        // 生成盐值和加密密码
+        const salt = crypto.randomBytes(16).toString('hex');
+        const encryptedPassword = encrypt(password, salt);
+
+        // 创建管理员账号
+        const insertResult = {};
+        await Orm.insert(User, {
+            Name: name,
+            Email: email,
+            Password: encryptedPassword,
+            Salt: salt,
+            Admin: true,
+            Status: 1
+        })(insertResult);
+
+        const {data, error, stack, meta} = insertResult as OrmResult;
+
+        if (!data) {
+            console.error('创建管理员失败:', error, stack, meta);
+            return c.json(R.fail(error || '创建失败'));
+        }
+        System.getInstance().init = true
+        return c.json(R.okData({id: data.id, email}));
+    } catch (error) {
+        console.error('初始化管理员账号异常:', error);
+        return c.json(R.failMsg('系统错误，请稍后重试'));
+    }
+});
 
 app.post('/login', async (c: Context) => {
     let {email, password = ''} = await c.req.json() as AuthDto;
@@ -61,7 +128,6 @@ app.get('/check/:email', async (c: Context) => {
 });
 
 
-
 // 核心函数：从 Header 生成游客 ID
 const generateGuestId = (req) => {
     // 1. 提取 Header 核心字段（处理空值，避免 undefined）
@@ -70,7 +136,7 @@ const generateGuestId = (req) => {
     const acceptLang = req.header()['accept-language'] || 'unknown_lang';
     const secChUa = req.header()['sec-ch-ua'] || ''; // 可选字段，空值不影响
 
-    console.log("generateGuestId", userAgent,ip,acceptLang,secChUa)
+    console.log("generateGuestId", userAgent, ip, acceptLang, secChUa)
 
     // 2. 拼接特征字符串（按固定顺序，避免顺序不同导致哈希结果不同）
     const featureStr = `${userAgent}|${ip}|${acceptLang}|${secChUa}`;
@@ -88,10 +154,9 @@ const generateGuestId = (req) => {
 app.get('/session', async (c: Context) => {
     const header = c.req.header();
 
-    console.log("session",  generateGuestId(c.req))
+    console.log("session", generateGuestId(c.req))
     return c.json({});
 });
-
 
 
 export default app;

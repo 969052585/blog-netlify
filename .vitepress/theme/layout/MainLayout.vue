@@ -64,7 +64,7 @@ async function checkInit() {
   let result = await init()
   if (!result) {
     toast.warning("后端初始化未完成, 请先设置管理员账号")
-    setTimeout(site.openLoginPage, 1500)
+    setTimeout(() => site.openLoginPage(true), 1500)
   }
 }
 

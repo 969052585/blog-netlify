@@ -42,9 +42,9 @@ function useLimitedFun<F extends (...args: any) => any>(
 }
 
 export const loadEnv = useLimitedFun(() => {
-    console.log("🏁 loadEnv start...")
+    // console.log("🏁 loadEnv start...")
     let result = dotenv.config({debug: true, override: true})
-    console.log("✅ loadEnv end...", result.parsed)
+    // console.log("✅ loadEnv end...", result.parsed)
     return result
 })
 

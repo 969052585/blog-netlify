@@ -2,8 +2,13 @@
 import {buttonVariants} from '@/lib/registry/new-york/ui/button'
 import {cn} from '@/lib/utils'
 import UserAuthForm from './components/UserAuthForm.vue'
+import InitAdminForm from './components/InitAdminForm.vue'
 import BingImage from "./components/BingImage.vue";
-import {toast} from "vue-sonner";
+import {toast} from "vue-sonner"
+import {hasQuery} from '../../lib/utils'
+
+const isInit = hasQuery('init')
+
 </script>
 
 <template>
@@ -34,7 +39,12 @@ import {toast} from "vue-sonner";
       <div class="absolute inset-0 bg-zinc-900"/>
       <BingImage/>
     </div>
-    <div id="auth-form" class="lg:p-8">
+    <div id="init-form" v-if="isInit">
+      <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
+        <InitAdminForm/>
+      </div>
+    </div>
+    <div v-else id="auth-form" class="lg:p-8">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div class="flex flex-col space-y-2 text-center">
           <h1 class="text-2xl font-semibold tracking-tight">

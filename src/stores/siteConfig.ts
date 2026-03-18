@@ -124,7 +124,7 @@ function useSiteConfig() {
         },
         login: () => {
         },
-        openLoginPage: () => {
+        openLoginPage: (init = true) => {
         },
         setCheckedModule: (value: CheckedModule) => {
         },
@@ -178,8 +178,8 @@ function useSiteConfig() {
         window.netlifyIdentity!.open("login");
     }
 
-    function openLoginPage() {
-        useTabManager("/login", "登录").open();
+    function openLoginPage(init = false) {
+        useTabManager("/login" + (init && '?init' || ''), "登录").open();
     }
 
     function setCheckedModule(value: CheckedModule) {

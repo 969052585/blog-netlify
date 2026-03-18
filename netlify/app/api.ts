@@ -13,7 +13,8 @@ import {count} from "drizzle-orm";
 type Variables = JwtVariables
 const app = new Hono<{ Variables: Variables }>();
 
-app.get("/init",async (c: Context) => {
+
+app.get("/init", async (c: Context) => {
     const result = {};
     await Orm.exist(User, {Admin: true})(result);
     const {data: exist} = result as OrmResult<boolean>;
@@ -37,7 +38,7 @@ app.get('/:model/:id', async (c: Context) => {
     const {model, id} = c.req.param();
     const result = {};
     await Orm.queryOne(schema[model], id)(result);
-    const {data, stack,  error} = result as OrmResult;
+    const {data, stack, error} = result as OrmResult;
     return c.json(data ? R.okData(data) : R.fail(error, stack));
 });
 
@@ -101,9 +102,6 @@ app.post('/:model', async (c: Context) => {
 })
 
 
-
-
-
 app.put('/:model', async (c: Context) => {
     const {model} = c.req.param();
     const data = await c.req.json();
@@ -120,7 +118,8 @@ app.delete('/:model/:id?', async (c) => {
     let ids = [] as Array<string | number>;
     try {
         ids = await c.req.json();
-    } catch (e) {}
+    } catch (e) {
+    }
     if (id) ids.push(id);
     const result = {}
     await Orm.delete(schema[model], ids)(result)

@@ -10,7 +10,7 @@ const DB = createSingleInstance(() => {
     const pool = new Pool({connectionString: process.env.NETLIFY_DATABASE_URL});
     //@ts-ignore
     let DB = drizzle({client: pool})
-    console.debug("✅ DB SingleInstance created!")
+    console.debug("✅ DB SingleInstance created!" + new Date().toLocaleString())
     return DB
 });
 
