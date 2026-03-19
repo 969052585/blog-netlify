@@ -4,6 +4,7 @@ import * as console from "console";
 import {isString} from "lodash-es";
 import type {Handler} from "../types";
 import App from "../app";
+export * from './system'
 
 interface Supplier<T> {
     (): T;

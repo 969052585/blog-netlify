@@ -1,4 +1,4 @@
-import {pgTable, serial, integer, text,boolean, timestamp, varchar} from 'drizzle-orm/pg-core';
+import {pgTable, serial, integer, boolean, timestamp, varchar} from 'drizzle-orm/pg-core';
 import {sql} from 'drizzle-orm';
 import type {Columns} from './common';
 import {CommonColumn} from './common';
@@ -11,14 +11,6 @@ const UserColumns: Columns = {
     Email: varchar('email', {length: 255}),
     Admin: boolean('admin').default(false),
     Password: varchar('password', {length: 255}),
-    Department: varchar('department', {length: 100}),
-    EmployeeType: varchar('employee_type', {length: 50}),
-    ProbationStart: timestamp('probation_start'),
-    ProbationEnd: timestamp('probation_end'),
-    ProbationDuration: varchar('probation_duration', {length: 50}),
-    ProtocolStart: timestamp('protocol_start'),
-    ProtocolEnd: timestamp('protocol_end'),
-    Address: text(),
     Status: integer(),
     Salt: varchar('salt', {length: 255}),
     [CommonColumn.CreatedAt]: timestamp('created_at')

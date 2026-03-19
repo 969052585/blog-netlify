@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import {buttonVariants} from '@/lib/registry/new-york/ui/button'
 import {cn} from '@/lib/utils'
+import {ref} from '@vue/reactivity'
 import UserAuthForm from './components/UserAuthForm.vue'
 import InitAdminForm from './components/InitAdminForm.vue'
 import BingImage from "./components/BingImage.vue";
 import {toast} from "vue-sonner"
 import {hasQuery} from '../../lib/utils'
 
-const isInit = hasQuery('init')
+const isInit = ref(hasQuery('init'))
 
 </script>
 
@@ -41,7 +42,7 @@ const isInit = hasQuery('init')
     </div>
     <div id="init-form" v-if="isInit">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
-        <InitAdminForm/>
+        <InitAdminForm :success="() => isInit = false"/>
       </div>
     </div>
     <div v-else id="auth-form" class="lg:p-8">

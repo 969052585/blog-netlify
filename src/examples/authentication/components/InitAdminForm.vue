@@ -3,10 +3,11 @@ import {Button} from '@/lib/registry/new-york/ui/button'
 import {Input} from '@/lib/registry/new-york/ui/input'
 import {Label} from '@/lib/registry/new-york/ui/label'
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/lib/registry/new-york/ui/card'
-import {reactive, ref} from 'vue'
+import {reactive, ref} from '@vue/reactivity'
 import {toast} from 'vue-sonner'
 import LucideSpinner from '~icons/lucide/loader-2'
 import {useRouter} from 'vitepress'
+
 
 const $router = useRouter()
 const isLoading = ref(false)
@@ -17,6 +18,10 @@ interface InitForm {
   password: string
   confirmPassword: string
 }
+
+const props = defineProps<{
+  success: () => void
+}>()
 
 const state = reactive<InitForm>({
   name: '',
@@ -84,10 +89,9 @@ async function onSubmit(event: Event) {
     }
     
     toast.success('初始化成功！即将跳转到登录页面')
-    
-    // 延迟跳转，让用户看到成功提示
+
     setTimeout(() => {
-      $router.go('/authentication')
+      props.success()
     }, 1500)
   } catch (error) {
     console.error('初始化失败:', error)

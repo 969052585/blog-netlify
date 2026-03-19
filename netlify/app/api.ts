@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {Context, Hono} from 'hono';
-import {R} from '../common';
+import {R, System} from '../common';
 import {Orm, PgSelect} from '../common/orm';
 import {OrmResult, QueryBody} from '../types';
 import type {JwtVariables} from 'hono/jwt';
@@ -15,9 +15,11 @@ const app = new Hono<{ Variables: Variables }>();
 
 
 app.get("/init", async (c: Context) => {
+    if (System.getInstance().init) return c.text(true)
     const result = {};
     await Orm.exist(User, {Admin: true})(result);
     const {data: exist} = result as OrmResult<boolean>;
+    System.getInstance().init = exist
     return c.text(exist)
 })
 

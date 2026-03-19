@@ -5,7 +5,7 @@ import {Context, Hono} from 'hono';
 import {Orm} from '../common/orm';
 import {User} from '../db/schema';
 import {isObject, isString} from 'lodash-es'
-import {createSingleInstance, R} from '../common';
+import {R,System} from '../common';
 
 import type {OrmResult} from '../types'
 
@@ -16,8 +16,6 @@ import process from "process";
 
 const app = new Hono();
 
-
-
 class AuthDto {
     email: string;
     password: string;
@@ -27,14 +25,11 @@ export const encrypt = (value: string, salt: string) =>
     crypto.pbkdf2Sync(value, salt, 1000, 18, 'sha256').toString('hex');
 
 
-const System = createSingleInstance(() => ({
-    init: false
-}))
+
 
 app.post("/init", async (c: Context) => {
     if (System.getInstance().init) return c.json(R.fail('系统已被初始化'));
     try {
-        // 检查是否已经存在管理员账号
         const checkResult = {};
         await Orm.exist(User, {Admin: true})(checkResult);
         const {data: exist} = checkResult as OrmResult<boolean>;
@@ -43,30 +38,23 @@ app.post("/init", async (c: Context) => {
             System.getInstance().init = true
             return c.json(R.failMsg('管理员账号已存在，请直接登录'));
         }
-
-        // 获取请求数据
         const {name, email, password} = await c.req.json();
 
-        // 验证必填字段
         if (!email || !password || !name) {
             return c.json(R.failMsg('请填写完整信息'));
         }
 
-        // 检查邮箱是否已被使用
         const emailCheckResult = {};
         await Orm.exist(User, {Email: email})(emailCheckResult);
         const {data: emailExist} = emailCheckResult as OrmResult<boolean>;
 
         if (emailExist) {
-            System.getInstance().init = true
             return c.json(R.failMsg('该邮箱已被使用'));
         }
 
-        // 生成盐值和加密密码
         const salt = crypto.randomBytes(16).toString('hex');
         const encryptedPassword = encrypt(password, salt);
 
-        // 创建管理员账号
         const insertResult = {};
         await Orm.insert(User, {
             Name: name,
