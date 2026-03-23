@@ -55,10 +55,18 @@ function newAxiosInstance() {
             reject = _reject
         })
         options = options || {};
+
+        let hasToken = false;
+
         let headers = (options.headers || {}) as Record<string, any>
         if (window.netlifyIdentity) {
             const user = window.netlifyIdentity.currentUser() || {token: {access_token: ""}}
             const token = user.token?.access_token
+            if (token) hasToken = true
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+        }
+        if (!hasToken) {
+            const token = localStorage["X-TOKEN"]
             if (token) headers['Authorization'] = 'Bearer ' + token;
         }
         if (!headers['Content-Type']) headers['Content-Type'] = 'application/json'

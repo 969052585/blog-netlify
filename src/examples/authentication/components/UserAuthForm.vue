@@ -60,9 +60,9 @@ function gitHubLogin() {
   const netlifyIdentity = window.netlifyIdentity
   if (!netlifyIdentity) return
   isLoading.value = true
-  netlifyIdentity.init({container: "#auth-form"})
+  netlifyIdentity.init({container: "#auth-form",locale: "zh-CN"})
   // 初始化 Identity Widget
-  netlifyIdentity.open('login', {provider: 'github'});
+  netlifyIdentity.open('login');
   // 监听登录成功事件
   netlifyIdentity.on('login', (user) => {
     console.log('登录成功，用户信息：', user);

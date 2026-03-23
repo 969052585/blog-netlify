@@ -179,7 +179,8 @@ function useSiteConfig() {
     }
 
     function openLoginPage(init = false) {
-        useTabManager("/login" + (init && '?init' || ''), "登录").open();
+        if (init) useTabManager("/login", "初始化").open();
+        else login()
     }
 
     function setCheckedModule(value: CheckedModule) {

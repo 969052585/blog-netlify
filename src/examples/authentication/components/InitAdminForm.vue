@@ -6,10 +6,8 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/lib/r
 import {reactive, ref} from '@vue/reactivity'
 import {toast} from 'vue-sonner'
 import LucideSpinner from '~icons/lucide/loader-2'
-import {useRouter} from 'vitepress'
 
 
-const $router = useRouter()
 const isLoading = ref(false)
 
 interface InitForm {
@@ -19,9 +17,6 @@ interface InitForm {
   confirmPassword: string
 }
 
-const props = defineProps<{
-  success: () => void
-}>()
 
 const state = reactive<InitForm>({
   name: '',
@@ -60,6 +55,7 @@ function validateForm(): boolean {
   return true
 }
 
+const initialized = ref(false)
 async function onSubmit(event: Event) {
   event.preventDefault()
   
@@ -82,17 +78,20 @@ async function onSubmit(event: Event) {
     })
     
     const result = await response.json()
-    
+    function doInitialized() {
+      setTimeout(() => {
+        initialized.value = true
+      }, 1500)
+    }
     if (result.code !== 200) {
-      toast.warning(result.msg || '初始化失败')
+      let msg = result.msg || '初始化失败'
+      toast.warning(msg)
+      if (msg === '系统已被初始化') doInitialized()
       return
     }
     
-    toast.success('初始化成功！即将跳转到登录页面')
-
-    setTimeout(() => {
-      props.success()
-    }, 1500)
+    toast.success('初始化成功！')
+    doInitialized()
   } catch (error) {
     console.error('初始化失败:', error)
     toast.error('网络错误，请稍后重试')
@@ -161,7 +160,7 @@ async function onSubmit(event: Event) {
         </div>
         
         <div class="pt-2">
-          <Button type="submit" class="w-full" :disabled="isLoading">
+          <Button type="submit" class="w-full" :disabled="isLoading || initialized">
             <LucideSpinner v-if="isLoading" class="mr-2 h-4 w-4 animate-spin"/>
             {{ isLoading ? '创建中...' : '创建管理员账号' }}
           </Button>
