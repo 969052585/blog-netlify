@@ -1,6 +1,7 @@
 // @ts-nocheck
 import {markRaw, reactive} from "vue";
 import * as api from "@/lib/api";
+import {article} from "@/lib/api";
 import {groupBy, keyBy, mapValues} from "lodash-es";
 import {useTabManager} from "@/lib/hooks";
 import {toast} from "vue-sonner";
@@ -203,13 +204,21 @@ function useSiteConfig() {
             const value = state.checkedQuery[key as keyof CheckedQuery];
             if (value) articleQuery[key] = value;
         }
-        let response = await api.page("Article", {
+        console.log('调用 article.page，参数:', {
+            page: {current: state.page.current, size: state.page.size},
+            query: articleQuery,
+            options: {orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"]}
+        });
+        
+        let response = await article.page({
             current: state.page.current,
             size: state.page.size,
         }, articleQuery, {orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"]}) as {
             page: Page;
             list: Article[];
         };
+        
+        console.log('article.page 返回:', response);
         Object.assign(state.page, response.page);
         state.articles = markRaw(response.list);
     }

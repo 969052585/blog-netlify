@@ -18,6 +18,7 @@ const ArticleColumns: Columns = {
     CategoryCode: varchar('category_code', {length: 50}),
     Hot: varchar('is_hot', {length: 1}).default('N'),
     Public: varchar('is_public', {length: 1}).default('Y'),
+    Email: varchar('email', {length: 255}),
     [CommonColumn.CreatedAt]: timestamp('created_at')
         .notNull()
         .default(sql`CURRENT_TIMESTAMP`),

@@ -59,6 +59,14 @@ function newAxiosInstance() {
         let hasToken = false;
 
         let headers = (options.headers || {}) as Record<string, any>
+        
+        // 等待 netlifyIdentity 加载完成（最多等待 5 秒）
+        if (!window.netlifyIdentity) {
+            for (let i = 0; i < 50 && !window.netlifyIdentity; i++) {
+                await new Promise(r => setTimeout(r, 100));
+            }
+        }
+        
         if (window.netlifyIdentity) {
             const user = window.netlifyIdentity.currentUser() || {token: {access_token: ""}}
             const token = user.token?.access_token
@@ -156,6 +164,11 @@ export const init: AxiosInstance['get'] = () => axios.get(`/api/init`)
 export const article = {
     add: ((data: any) => axios.post(`/a`, data)) as AxiosInstance['post'],
     update: ((data: any) => axios.put(`/a`, data)) as AxiosInstance['put'],
+    page: (page: any, query: any, options: any = {}) => axios.post(`/a/page`, {
+        query,
+        page,
+        ...options
+    }),
 }
 
 export const page = (model: string, page: any, query: any, options: any = {}) => axios.post(`/api/page`, {
