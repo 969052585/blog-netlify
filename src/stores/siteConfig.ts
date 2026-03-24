@@ -204,13 +204,13 @@ function useSiteConfig() {
             const value = state.checkedQuery[key as keyof CheckedQuery];
             if (value) articleQuery[key] = value;
         }
-        console.log('调用 article.page，参数:', {
+        console.log('调用 article，参数:', {
             page: {current: state.page.current, size: state.page.size},
             query: articleQuery,
             options: {orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"]}
         });
         
-        let response = await article.page({
+        let response = await article({
             current: state.page.current,
             size: state.page.size,
         }, articleQuery, {orderBy: ["-Hot", "-UpdatedAt", "-CreatedAt"]}) as {
@@ -218,7 +218,7 @@ function useSiteConfig() {
             list: Article[];
         };
         
-        console.log('article.page 返回:', response);
+        console.log('article 返回:', response);
         Object.assign(state.page, response.page);
         state.articles = markRaw(response.list);
     }

@@ -161,15 +161,19 @@ export const add: AxiosInstance['post'] = (model, data) => axios.post(`/api/${mo
 export const init: AxiosInstance['get'] = () => axios.get(`/api/init`)
 
 
-export const article = {
-    add: ((data: any) => axios.post(`/a`, data)) as AxiosInstance['post'],
-    update: ((data: any) => axios.put(`/a`, data)) as AxiosInstance['put'],
-    page: (page: any, query: any, options: any = {}) => axios.post(`/a/page`, {
-        query,
-        page,
-        ...options
-    }),
-}
+export const article = Object.assign(
+    function (page: any, query: any, options: any = {}) {
+        return axios.post(`/a/page`, {
+            query,
+            page,
+            ...options
+        })
+    },
+    {
+        add: ((data: any) => axios.post(`/a`, data)) as AxiosInstance['post'],
+        update: ((data: any) => axios.put(`/a`, data)) as AxiosInstance['put'],
+    }
+)
 
 export const page = (model: string, page: any, query: any, options: any = {}) => axios.post(`/api/page`, {
     model,
